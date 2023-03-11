@@ -1,0 +1,50 @@
+.overlay {
+    position: absolute;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+}
+
+.graph {
+    overflow: hidden;
+    background: linear-gradient(180deg, deepskyblue, skyblue);
+}
+
+.palette {
+
+}
+
+.node {
+    position: absolute;
+    background: aquamarine;
+    transform-origin: 0 0;
+    box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.05);
+}
+
+.node:hover {
+    z-index: 2;
+}
+
+.port {
+    position: absolute;
+    cursor: crosshair;
+    box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.05);
+}
+
+.wire {
+    stroke: #333;
+}
+
+.dynamic-dash {
+    animation: dash-stream 1s linear infinite;
+    stroke-dasharray: 5, 5;
+}
+
+@keyframes dash-stream {
+    0% { stroke-dashoffset: 0; }
+    100% { stroke-dashoffset: -50; }
+}
+
+.frame {
+    position: absolute;
+    background-color: rgba(0, 191, 255, 0.7);
+}
