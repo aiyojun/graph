@@ -1,52 +1,10 @@
-.overlay {
-    position: absolute;
-    left: 0; top: 0;
-    width: 100%; height: 100%;
-}
+.graph { background: #000; }
+.wire { stroke: #fff; }
+.port { background-color: skyblue; }
+.custom-port-background { width: 100%; height: 100%; border-radius: 20px; background-color: skyblue; }
+.node { background: none; box-shadow: 0 0 10px 1px rgba(255, 255, 255, 0.8); }
+.custom-node-background { width: 100%; height: 100%; border-radius: 10px; background-color: aquamarine; }
+.group { background-color: rgba(255, 255, 255, 0); }
+.custom-group-background { width: 100%; height: 100%; background-color: #333; }
 
-.graph {
-    overflow: hidden;
-    background: #222;
-}
-
-.palette {
-
-}
-
-.node {
-    position: absolute;
-    background: mediumaquamarine;
-    transform-origin: 0 0;
-    box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-}
-
-.node:hover {
-    z-index: 2;
-}
-
-.port {
-    position: absolute;
-    cursor: crosshair;
-    box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.05);
-    background-color: skyblue;
-}
-
-.wire {
-    stroke: aquamarine;
-}
-
-.dynamic-dash {
-    animation: dash-stream 1s linear infinite;
-    stroke-dasharray: 5, 5;
-}
-
-@keyframes dash-stream {
-    0% { stroke-dashoffset: 0; }
-    100% { stroke-dashoffset: -50; }
-}
-
-.frame {
-    position: absolute;
-    background-color: rgba(0, 191, 255, 0.25);
-}
+.frame { background-color: rgba(255,255,255,0.1) }
