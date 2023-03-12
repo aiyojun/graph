@@ -46,16 +46,6 @@
     stroke: darkslateblue;
 }
 
-.dynamic-dash {
-    animation: dash-stream 1s linear infinite;
-    stroke-dasharray: 5, 5;
-}
-
-@keyframes dash-stream {
-    0% { stroke-dashoffset: 0; }
-    100% { stroke-dashoffset: -50; }
-}
-
 .frame {
     position: absolute;
     background-color: rgba(0, 191, 255, 0.25);

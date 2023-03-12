@@ -52,6 +52,7 @@ export class Graph {
     snapshotOfGroups: Map<string, Group> = new Map()
     context: Context = { scale: 1.0 }
     begin: Port
+    animation: HTMLStyleElement = null
     mount(el: HTMLElement) {
         this.root = el
         this.root.className = 'graph overlay'
@@ -67,10 +68,13 @@ export class Graph {
                 }
                 return true
             }})
+        document.head.insertAdjacentHTML('beforeend', `<style></style>`)
+        this.animation = document.head.lastElementChild as HTMLStyleElement
         this.root.addEventListener('mousemove', e => this.handleMouseMove(e))
         this.root.addEventListener('mousedown', e => this.handleMouseDownOnGraph(e))
         this.root.addEventListener('wheel', e => this.handleWheel(e), { passive: false })
         window.addEventListener('mouseup', e => this.handleMouseUp(e))
+        this.updateAnimation()
         return this
     }
     theme: string = 'bright'
@@ -314,6 +318,7 @@ export class Graph {
             })
         })
         this.updateWire()
+        this.updateAnimation()
     }
     //
     pathd = (scale: number, from: Point, to: Point) => {
@@ -359,5 +364,18 @@ export class Graph {
             const node = this.nodes.get(uuid).state
             node.x = snap.x + deltaX; node.y = snap.y + deltaY
         })
+    }
+    updateAnimation() {
+        const dashWidth = 5 * this.context.scale
+        this.animation.innerText = `
+        .dynamic-dash {
+            animation: dash-stream 1s linear infinite;
+            stroke-dasharray: ${dashWidth}, ${dashWidth};
+        }
+        @keyframes dash-stream {
+            0% { stroke-dashoffset: 0; }
+            100% { stroke-dashoffset: ${- dashWidth * 10}; }
+        }
+        `
     }
 }

@@ -1,6 +1,7 @@
 const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 module.exports = {
 	mode: 'production',
 	entry: path.join(__dirname, "/src/index.js"),
@@ -69,6 +70,11 @@ module.exports = {
 		extensions: [".json", ".js", ".ts", ".css"],
 	},
 	plugins: [
+		new CopyWebpackPlugin({
+			patterns: [
+				{ from: 'src/theme' }
+			]
+		}),
 		new HtmlWebpackPlugin({
 			template: "./public/index.html",
 			filename: "index.html",
