@@ -183,6 +183,11 @@ export class Graph {
         this.nodes.set(ref.uuid, wrapper)
         return wrapper
     }
+    bindPortTo(node: Node, portEl: HTMLElement, portType: number = 0) {
+        const w = Wrapper.bind<BasicPort>({ uuid: node.state.uuid, type: portType, i: node.state.ports.length }, portEl)
+        this.wports.set(this.portSign(w.state), w)
+        return this
+    }
     updateWire() {
         for (let i = 0; i < this.wires.length; i++) {
             const wire = this.wires[i]
