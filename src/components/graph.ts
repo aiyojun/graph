@@ -5,21 +5,40 @@ import { wirePath } from "../jlib/svg"
 import './essential.css'
 
 export const uuidv4 = () => v4().replaceAll('-', '')
-export type Context = { scale: number; }
-export type Port = { uuid?: string; type: number; i: number; x?: number; y?: number; }
-export type Node = { uuid: string; x: number; y: number; w?:number; h?: number; ports?: Array<Port>; group?: string; }
+export type Context = { scale: number; useHandle: boolean; useTitle: boolean; }
+export type BasicPort = { uuid?: string; type: number; i: number; x?: number; y?: number; }
 export type Group = { uuid: string; x: number; y: number; w:number; h: number; follower: Array<string>; }
-export type Wire = { from: Port; to: Port; }
+export type BasicWire = { from: BasicPort; to: BasicPort; }
 export type Task = { type: number; cursor: Point; }
-export type GraphJson = { nodes: Array<Node>, wires: Array<Wire>; }
+export type GraphJson = { nodes: Array<BasicNode>, wires: Array<BasicWire>; }
 const setStyleBox = (el: HTMLElement, x: number, y: number, w: number, h: number) =>
 { el.style.top = `${y}px`; el.style.left = `${x}px`; el.style.width = `${w}px`; el.style.height = `${h}px`; }
 
 export class Wrapper<T> {
     state: T
+    el: HTMLElement
     sign: (_: T) => string
-    constructor(target: T, sign: (_: T) => string) { this.state = target; this.sign = sign }
+    constructor(target: T) { this.state = target }
     ref = () => document.getElementById(this.sign(this.state))
+    refBy(sign: (_: T) => string) { this.sign = sign; return this }
+    put(el: HTMLElement) { this.el = el; return this }
+    static createBy<T>(target: T, sign: (_: T) => string): Wrapper<T>
+    { const w = new Wrapper(target); w.refBy(sign); return w }
+    static bind<T>(target: T, el: HTMLElement): Wrapper<T>
+    { const w = new Wrapper(target); w.put(el); return w }
+}
+
+export type Node = Wrapper<BasicNode>
+export type Wire = Wrapper<BasicWire>
+export type Port = Wrapper<BasicPort>
+
+export class BasicNode {
+    uuid: string
+    title?: string = ''
+    x: number; y: number
+    w?: number; h?: number
+    ports?: Array<BasicPort>
+    group?: string
 }
 
 function reactive<T extends { x: number, y: number, w?: number, h?: number }>(graph: Graph, node: T, el: HTMLElement): T {
@@ -43,15 +62,16 @@ export class Graph {
     iWire: SVGPathElement = null
     frame: HTMLDivElement = null
     task: Task = { type: -1, cursor: { x: 0, y: 0 } }
-    nodes: Map<string, Wrapper<Node>> = new Map()
-    ports: Map<string, Port> = new Map()
-    wires: Array<Wrapper<Wire>> = []
+    nodes: Map<string, Wrapper<BasicNode>> = new Map()
+    ports: Map<string, BasicPort> = new Map()
+    wports: Map<string, Wrapper<BasicPort>> = new Map()
+    wires: Array<Wrapper<BasicWire>> = []
     groups: Map<string, Wrapper<Group>> = new Map()
-    linkageValidations: Array<(_1: Port, _2: Port) => boolean> = []
-    snapshotOfNodes: Map<string, Node> = new Map()
+    linkageValidations: Array<(_1: BasicPort, _2: BasicPort) => boolean> = []
+    snapshotOfNodes: Map<string, BasicNode> = new Map()
     snapshotOfGroups: Map<string, Group> = new Map()
-    context: Context = { scale: 1.0 }
-    begin: Port
+    context: Context = { scale: 1.0, useHandle: false, useTitle: true, }
+    begin: BasicPort
     animation: HTMLStyleElement = null
     mount(el: HTMLElement) {
         this.root = el
@@ -135,28 +155,31 @@ export class Graph {
         })
         return data
     }
-    addWireValidation(fn: (_1: Port, _2: Port) => boolean) { this.linkageValidations.push(fn); return this }
-    avoidSamePort() { return this.addWireValidation((from: Port, to: Port) => from.uuid === to.uuid && from.type === to.type && from.i === to.i) }
-    avoidSameNode() { return this.addWireValidation((from: Port, to: Port) => from.uuid === to.uuid) }
-    avoidSameType() { return this.addWireValidation((from: Port, to: Port) => from.type === to.type) }
-    createNode(x = 0, y = 0, w = -1, h = -1, uuid: string = uuidv4(), ports: Array<Port> = []): Wrapper<Node> {
-        const node: Node = { uuid, x, y, w, h }
+    addWireValidation(fn: (_1: BasicPort, _2: BasicPort) => boolean) { this.linkageValidations.push(fn); return this }
+    avoidSamePort() { return this.addWireValidation((from: BasicPort, to: BasicPort) => from.uuid === to.uuid && from.type === to.type && from.i === to.i) }
+    avoidSameNode() { return this.addWireValidation((from: BasicPort, to: BasicPort) => from.uuid === to.uuid) }
+    avoidSameType() { return this.addWireValidation((from: BasicPort, to: BasicPort) => from.type === to.type) }
+    createNode(x = 0, y = 0, w = -1, h = -1, uuid: string = uuidv4(), ports: Array<BasicPort> = []): Wrapper<BasicNode> {
+        const node: BasicNode = { uuid, x, y, w, h }
         if (w !== -1 && h !== -1 && ports.length === 0) {
             ports.push({ uuid: node.uuid, x: 0, y: h * 0.5, i: 0, type: 0 })
             ports.push({ uuid: node.uuid, x: w, y: h * 0.5, i: 0, type: 1 })
         }
         ports.forEach(port => { port.uuid = node.uuid; this.ports.set(this.portSign(port), port) })
-        this.root.insertAdjacentHTML('beforeend', this.$node(this, node, ports))
+        this.root.insertAdjacentHTML('beforeend', this.reuseNodeLayer(this.context, node, ports))
         const el = this.root.lastElementChild as HTMLDivElement
         if (w !== -1 && h !== -1) { el.style.width = `${w}px`; el.style.height = `${h}px` }
-        const ref = reactive<Node>(this, node, el)
-        el.addEventListener('mousedown', e => this.handleMouseDownOnNode(e, ref.uuid))
+        const ref = reactive<BasicNode>(this, node, el)
+        if (this.context.useHandle)
+            el.children[1].addEventListener('mousedown', (e: MouseEvent) => this.handleMouseDownOnNode(e, ref.uuid))
+        else
+            el.addEventListener('mousedown', (e: MouseEvent) => this.handleMouseDownOnNode(e, ref.uuid))
         ports.forEach(portd => {
             const portel = document.getElementById(this.portSign(portd))
             portel.addEventListener('mousedown', e => this.handleMouseDownOnPort(e, ref, portd))
             portel.addEventListener('mouseup', e => this.handleMouseUpOnPort(e, ref, portd))
         })
-        const wrapper = new Wrapper<Node>(ref, (n: Node) => `node@${n.uuid}`)
+        const wrapper = Wrapper.createBy<BasicNode>(ref, (n: BasicNode) => `node@${n.uuid}`)
         this.nodes.set(ref.uuid, wrapper)
         return wrapper
     }
@@ -168,21 +191,21 @@ export class Graph {
                 this.convert(this, this.nodes.get(wire.state.to.uuid).state, wire.state.to)))
         }
     }
-    connect(from: Port, to: Port) {
+    connect(from: BasicPort, to: BasicPort) {
         for (let i = 0; i < this.linkageValidations.length; i++) {
             const fn = this.linkageValidations[i]
             if (fn(from, to)) {
                 return
             }
         }
-        const wire = new Wrapper<Wire>({from, to}, (wire: Wire) => this.wireSign(wire))
+        const wire = Wrapper.createBy<BasicWire>({from, to}, (wire: BasicWire) => this.wireSign(wire))
         this.palette.insertAdjacentHTML('beforeend', this.$wire(this,
             this.convert(this, this.nodes.get(wire.state.from.uuid).state, wire.state.from),
             this.convert(this, this.nodes.get(wire.state.to.uuid).state, wire.state.to),
             this.wireSign(wire.state)))
         this.wires.push(wire)
     }
-    compose(nodes: Array<Node>, bias: number = 10): Wrapper<Group> {
+    compose(nodes: Array<BasicNode>, bias: number = 10): Wrapper<Group> {
         const xMin = Math.min(...(nodes.map(node => node.x)))
         const xMax = Math.max(...(nodes.map(node => (node.x + node.w * this.context.scale))))
         const yMin = Math.min(...(nodes.map(node => node.y)))
@@ -192,7 +215,7 @@ export class Graph {
         this.root.insertAdjacentHTML('beforeend', this.$group(this, g))
         const el = this.root.lastElementChild as HTMLDivElement
         el.addEventListener('mousedown', e => this.handleMouseDownOnGroup(e, g.uuid))
-        const wrapper = new Wrapper(reactive<Group>(this, g, el), g => `group@${g.uuid}`)
+        const wrapper = Wrapper.createBy(reactive<Group>(this, g, el), g => `group@${g.uuid}`)
         this.groups.set(g.uuid, wrapper)
         return wrapper
     }
@@ -205,7 +228,7 @@ export class Graph {
         group.ref().remove()
         this.groups.delete(uuid)
     }
-    handleMouseDownOnPort(e: MouseEvent, node: Node, port: Port) {
+    handleMouseDownOnPort(e: MouseEvent, node: BasicNode, port: BasicPort) {
         if (e.buttons === 1) {
             e.preventDefault()
             e.stopPropagation()
@@ -216,7 +239,7 @@ export class Graph {
             this.task = { type: 2, cursor: { x: e.clientX, y: e.clientY } }
         }
     }
-    handleMouseUpOnPort(e: MouseEvent, node: Node, port: Port) {
+    handleMouseUpOnPort(e: MouseEvent, node: BasicNode, port: BasicPort) {
         this.connect(this.begin, port)
     }
     handleMouseDownOnNode(e: MouseEvent, uuid: string) {
@@ -329,13 +352,23 @@ export class Graph {
         graph.nodes .forEach(node  =>  node.ref().style.transform = `scale(${scale})`)
         graph.groups.forEach(group => group.ref().style.transform = `scale(${scale})`)
     }
-    $node = (graph: Graph, props: Node, ports: Array<Port>) => (`<div id="node@${props.uuid}" class="node" style="left: ${props.x}px; top: ${(props.y)}px; transform: scale(${graph.context.scale});"><div class="custom-node-background"></div>
-        ${ports.map(port => (`<div class="port" id="${this.portSign(port)}" style="left: ${port.x - 5}px; top: ${port.y - 5}px; border-radius: 10px; width: 10px; height: 10px;"><div class="custom-port-background"></div></div>`)).join('')}</div>`)
+    reuseNodeLayer(context: Context, node: BasicNode, ports: Array<BasicPort>) {
+        return (`<div id="node@${node.uuid}" class="node" style="left: ${node.x}px; top: ${node.y}px; transform: scale(${context.scale});${context.useHandle ? '' : 'cursor: move;'}">
+            <div class="custom-node-background"></div>
+            ${context.useHandle ? '<div class="handle"></div>' : ''}
+            ${context.useTitle  ? `<div class="title">${node.title}</div>` : ''}
+            ${ports.map(port => (`<div 
+                class="port" id="${this.portSign(port)}" 
+                style="left: ${port.x - 5}px; top: ${port.y - 5}px; width: 10px; height: 10px;">
+                <div class="custom-port-background"></div>
+            </div>`)).join('')}
+        </div>`)
+    }
     $wire = (graph: Graph, from: Point, to: Point, id: string) => (`<path class="wire dynamic-dash" id="${id}" fill="none" d="${this.pathd(graph.context.scale, from, to)}"></path>`)
     $group = (graph: Graph, node: Group) => (`<div id="group@${node.uuid}" class="group" style="top: ${node.y}px; left: ${node.x}px; width: ${node.w}px; height: ${node.h}px; transform: scale(${graph.context.scale});"><div class="custom-group-background"></div></div>`)
-    portSign = (port: Port) => (`port@${port.type}@${port.i}@${port.uuid}`)
-    wireSign = (wire: Wire) => (`wire@${wire.from.type}@${wire.from.i}@${wire.from.uuid}@${wire.to.type}@${wire.to.i}@${wire.to.uuid}`)
-    convert  = (graph: Graph, node: Node, port: Port) => ({ x: node.x + port.x * graph.context.scale, y: node.y + port.y * graph.context.scale })
+    portSign = (port: BasicPort) => (`port@${port.type}@${port.i}@${port.uuid}`)
+    wireSign = (wire: BasicWire) => (`wire@${wire.from.type}@${wire.from.i}@${wire.from.uuid}@${wire.to.type}@${wire.to.i}@${wire.to.uuid}`)
+    convert  = (graph: Graph, node: BasicNode, port: BasicPort) => ({ x: node.x + port.x * graph.context.scale, y: node.y + port.y * graph.context.scale })
     setFrame = (e: MouseEvent = null) => {
         if (e === null) {
             if (this.frame === null) {
