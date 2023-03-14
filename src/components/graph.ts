@@ -3,9 +3,10 @@ import { Point } from "../jlib/ds";
 import { scale2d } from "../jlib/matrix"
 import { wirePath } from "../jlib/svg"
 import './essential.css'
+import SvgAnchor from './anchor.svg'
 
 export const uuidv4 = () => v4().replaceAll('-', '')
-export type Context = { scale: number; useHandle: boolean; useTitle: boolean; }
+export type Context = { scale: number; keepSilence: boolean; style: 'default' | 'handle'; lock: 'ctrl' | 'alt' | 'none'; }
 export type BasicPort = { uuid?: string; type: number; i: number; x?: number; y?: number; }
 export type Group = { uuid: string; x: number; y: number; w:number; h: number; follower: Array<string>; }
 export type BasicWire = { from: BasicPort; to: BasicPort; }
@@ -32,6 +33,35 @@ export type Node = Wrapper<BasicNode>
 export type Wire = Wrapper<BasicWire>
 export type Port = Wrapper<BasicPort>
 
+export type Interceptor = { filter: Function; then: Function }
+function reactive<T extends Object>(target: T, interceptors: Array<Interceptor>) {
+    return new Proxy(target, {
+        get(target: T, p: string | symbol, receiver: any): any { return target[p] },
+        set(target: T, p: string | symbol, nv: any, receiver: any): boolean {
+            target[p] = nv
+            for (let i = 0; i < interceptors.length; i++) {
+                try {
+                    if (interceptors[i].filter(p)) {
+                        target[p] = nv
+                        interceptors[i].then(target[p])
+                        break
+                    }
+                } catch (e) {
+                    console.error(e)
+                }
+            }
+            return true
+        }
+    })
+}
+
+const buildGeometryInterceptors: (el: HTMLElement, context: Context) => Array<Interceptor> = (el, context) => ([
+    { filter: k => k ==='x', then: v => el.style.left   = `${v}px` },
+    { filter: k => k ==='y', then: v => el.style.top    = `${v}px` },
+    { filter: k => k ==='w', then: v => el.style.width  = `${v * context.scale}px` },
+    { filter: k => k ==='h', then: v => el.style.height = `${v * context.scale}px` },
+])
+
 export class BasicNode {
     uuid: string
     title?: string = ''
@@ -39,21 +69,6 @@ export class BasicNode {
     w?: number; h?: number
     ports?: Array<BasicPort>
     group?: string
-}
-
-function reactive<T extends { x: number, y: number, w?: number, h?: number }>(graph: Graph, node: T, el: HTMLElement): T {
-    return new Proxy(node, {
-        get(target: T, p: string | symbol, receiver: any): any { return target[p] },
-        set(target: T, p: string | symbol, newValue: any, receiver: any): boolean {
-            target[p] = newValue
-            switch (p) {
-                case 'x': el.style.left   = `${target[p]}px`; break;
-                case 'y': el.style.top    = `${target[p]}px`; break;
-                case 'w': el.style.width  = `${target[p] * graph.context.scale}px`; break;
-                case 'h': el.style.height = `${target[p] * graph.context.scale}px`; break;
-            }
-            return true
-        }})
 }
 
 export class Graph {
@@ -70,7 +85,7 @@ export class Graph {
     linkageValidations: Array<(_1: BasicPort, _2: BasicPort) => boolean> = []
     snapshotOfNodes: Map<string, BasicNode> = new Map()
     snapshotOfGroups: Map<string, Group> = new Map()
-    context: Context = { scale: 1.0, useHandle: false, useTitle: true, }
+    context: Context = { scale: 1.0, keepSilence: false, style: 'handle', lock: 'none' }
     begin: BasicPort
     animation: HTMLStyleElement = null
     mount(el: HTMLElement) {
@@ -115,6 +130,8 @@ export class Graph {
         }
         return this
     }
+    useContext(props: Record<string, unknown>)
+    { Array.from(Object.keys(props)).forEach(k => { if (k in this.context) this.context[k] = props[k] }); return this }
     removeTheme() {
         const es: Array<HTMLElement> = []
         for (let i = 0; i < document.head.children.length; i++) {
@@ -130,7 +147,7 @@ export class Graph {
     // snapshot() {}
     // inject() {}
     parse(data: GraphJson) {
-        data.nodes.forEach(node => { this.createNode(node.x, node.y, 200, 80, node.uuid, node.ports) })
+        data.nodes.forEach(node => { this.createNode({ x: node.x, y: node.y, w: 200, h: 80, uuid: node.uuid, ports: node.ports }) })
         data.wires.forEach(wire => { this.connect(wire.from, wire.to) })
         return this
     }
@@ -159,35 +176,55 @@ export class Graph {
     avoidSamePort() { return this.addWireValidation((from: BasicPort, to: BasicPort) => from.uuid === to.uuid && from.type === to.type && from.i === to.i) }
     avoidSameNode() { return this.addWireValidation((from: BasicPort, to: BasicPort) => from.uuid === to.uuid) }
     avoidSameType() { return this.addWireValidation((from: BasicPort, to: BasicPort) => from.type === to.type) }
-    createNode(x = 0, y = 0, w = -1, h = -1, uuid: string = uuidv4(), ports: Array<BasicPort> = []): Wrapper<BasicNode> {
-        const node: BasicNode = { uuid, x, y, w, h }
-        if (w !== -1 && h !== -1 && ports.length === 0) {
-            ports.push({ uuid: node.uuid, x: 0, y: h * 0.5, i: 0, type: 0 })
-            ports.push({ uuid: node.uuid, x: w, y: h * 0.5, i: 0, type: 1 })
+    createNode(props?: Record<string, unknown>): Wrapper<BasicNode> {
+        let node: BasicNode = { uuid: uuidv4(), x: 0, y: 0, w: undefined, h: undefined }
+        if (!this.context.keepSilence) {
+            console.info(`create node :`)
+            console.info(node)
         }
-        ports.forEach(port => { port.uuid = node.uuid; this.ports.set(this.portSign(port), port) })
+        Array.from(Object.keys(props)).forEach(k => { if (k in node) node[k] = props[k] })
+        const ports = this.buildDefaultPorts(node,
+            <number>('inPortNumber'  in props ? props['inPortNumber' ] : 0),
+            <number>('outPortNumber' in props ? props['outPortNumber'] : 0),
+            <'horizontal' | 'vertical'>('permutation' in props ? props['permutation'] : 'horizontal'))
         this.root.insertAdjacentHTML('beforeend', this.reuseNodeLayer(this.context, node, ports))
         const el = this.root.lastElementChild as HTMLDivElement
-        if (w !== -1 && h !== -1) { el.style.width = `${w}px`; el.style.height = `${h}px` }
-        const ref = reactive<BasicNode>(this, node, el)
-        if (this.context.useHandle)
-            el.children[1].addEventListener('mousedown', (e: MouseEvent) => this.handleMouseDownOnNode(e, ref.uuid))
-        else
-            el.addEventListener('mousedown', (e: MouseEvent) => this.handleMouseDownOnNode(e, ref.uuid))
-        ports.forEach(portd => {
-            const portel = document.getElementById(this.portSign(portd))
-            portel.addEventListener('mousedown', e => this.handleMouseDownOnPort(e, ref, portd))
-            portel.addEventListener('mouseup', e => this.handleMouseUpOnPort(e, ref, portd))
+        node = reactive(node, buildGeometryInterceptors(el, this.context)) // state lift
+        const handle = ({ default: () => el, handle: () => el.children[1] })[this.context.style]();
+        // events binding
+        handle.addEventListener('mousedown', (e: MouseEvent) => this.handleMouseDownOnNode(e, node.uuid))
+        ports.forEach(port => {
+            const el = document.getElementById(this.portSign(port))
+            el.addEventListener('mousedown', e => this.handleMouseDownOnPort(e, node, port))
+            el.addEventListener('mouseup'  , e => this.handleMouseUpOnPort  (e, node, port))
         })
-        const wrapper = Wrapper.createBy<BasicNode>(ref, (n: BasicNode) => `node@${n.uuid}`)
-        this.nodes.set(ref.uuid, wrapper)
+        const wrapper = Wrapper.bind<BasicNode>(node, el.children[0] as HTMLElement).refBy(bn => `node@${bn.uuid}`)
+        this.nodes.set(node.uuid, wrapper)
         return wrapper
     }
-    bindPortTo(node: Node, portEl: HTMLElement, portType: number = 0) {
-        const w = Wrapper.bind<BasicPort>({ uuid: node.state.uuid, type: portType, i: node.state.ports.length }, portEl)
-        this.wports.set(this.portSign(w.state), w)
-        return this
+    buildDefaultPorts(node: BasicNode, inPortNumber: number, outPortNumber: number, permutation?: 'horizontal' | 'vertical') {
+        if (node.w <= 0 || node.h <= 0) {
+            if (!this.context.keepSilence)
+                console.error(`Cannot create default ports for dynamic node!`)
+            return []
+        }
+        const h = permutation || 'horizontal'
+        const ports: Array<BasicPort> = []
+        for (let i = 0; i < inPortNumber; i++) {
+            h ? ports.push({uuid: node.uuid, x: 0, y: (node.h / (inPortNumber + 1)) * (i + 1), i, type: 0})
+                : ports.push({uuid: node.uuid, x: (node.w / (inPortNumber + 1)) * (i + 1), y: 0, i, type: 0})
+        }
+        for (let i = 0; i < outPortNumber; i++) {
+            h ? ports.push({uuid: node.uuid, x: node.w, y: (node.h / (outPortNumber + 1)) * (i + 1), i, type: 1})
+                : ports.push({uuid: node.uuid, x: (node.w / (outPortNumber + 1)) * (i + 1), y: node.h, i, type: 1})
+        }
+        return ports
     }
+    // bindPortTo(node: Node, portEl: HTMLElement, portType: number = 0) {
+    //     const w = Wrapper.bind<BasicPort>({ uuid: node.state.uuid, type: portType, i: node.state.ports.length }, portEl)
+    //     this.wports.set(this.portSign(w.state), w)
+    //     return this
+    // }
     updateWire() {
         for (let i = 0; i < this.wires.length; i++) {
             const wire = this.wires[i]
@@ -220,7 +257,7 @@ export class Graph {
         this.root.insertAdjacentHTML('beforeend', this.$group(this, g))
         const el = this.root.lastElementChild as HTMLDivElement
         el.addEventListener('mousedown', e => this.handleMouseDownOnGroup(e, g.uuid))
-        const wrapper = Wrapper.createBy(reactive<Group>(this, g, el), g => `group@${g.uuid}`)
+        const wrapper = Wrapper.createBy(reactive(g, buildGeometryInterceptors(el, this.context)), g => `group@${g.uuid}`)
         this.groups.set(g.uuid, wrapper)
         return wrapper
     }
@@ -303,16 +340,19 @@ export class Graph {
         } else if (e.buttons === 1 && this.task.type === 5) {
             this.moveGroup(e)
         } else if (e.buttons === 4 && this.task.type === 3) {
-            this.nodes.forEach(node => {
-                const snapshot = this.snapshotOfNodes.get(node.state.uuid)
-                node.state.x = snapshot.x + e.clientX - this.task.cursor.x
-                node.state.y = snapshot.y + e.clientY - this.task.cursor.y
-            })
-            this.groups.forEach(group => {
-                const snapshot = this.snapshotOfGroups.get(group.state.uuid)
-                group.state.x = snapshot.x + e.clientX - this.task.cursor.x
-                group.state.y = snapshot.y + e.clientY - this.task.cursor.y
-            })
+            const pass = ({ ctrl: () => e.ctrlKey, alt: () => e.altKey, none: () => true })[this.context.lock]()
+            if (pass) {
+                this.nodes.forEach(node => {
+                    const snapshot = this.snapshotOfNodes.get(node.state.uuid)
+                    node.state.x = snapshot.x + e.clientX - this.task.cursor.x
+                    node.state.y = snapshot.y + e.clientY - this.task.cursor.y
+                })
+                this.groups.forEach(group => {
+                    const snapshot = this.snapshotOfGroups.get(group.state.uuid)
+                    group.state.x = snapshot.x + e.clientX - this.task.cursor.x
+                    group.state.y = snapshot.y + e.clientY - this.task.cursor.y
+                })
+            }
         }
         this.updateWire()
     }
@@ -331,7 +371,8 @@ export class Graph {
         this.task.type = -1
     }
     handleWheel(e: WheelEvent) {
-        // if (!e.ctrlKey) return
+        const pass = ({ ctrl: () => e.ctrlKey, alt: () => e.altKey, none: () => true })[this.context.lock]()
+        if (!pass) return
         e.preventDefault()
         const pivot = { x: e.clientX - this.root.offsetLeft, y: e.clientY - this.root.offsetTop }
         scale2d(pivot, this.context.scale, -e.deltaY, (newScale, transform) => {
@@ -358,10 +399,14 @@ export class Graph {
         graph.groups.forEach(group => group.ref().style.transform = `scale(${scale})`)
     }
     reuseNodeLayer(context: Context, node: BasicNode, ports: Array<BasicPort>) {
-        return (`<div id="node@${node.uuid}" class="node" style="left: ${node.x}px; top: ${node.y}px; transform: scale(${context.scale});${context.useHandle ? '' : 'cursor: move;'}">
+        const style = `left: ${node.x}px; top: ${node.y}px;`
+            + `${(node.w !== undefined && node.w > 0) ? `width: ${node.w}px;` : ''}`
+            + `${(node.h !== undefined && node.h > 0) ? `height: ${node.h}px;` : ''}`
+            + `transform: scale(${context.scale});`
+            + `${context.style === 'handle' ? '' : 'cursor: move;'}`
+        return (`<div id="node@${node.uuid}" class="node" style="${style}">
             <div class="custom-node-background"></div>
-            ${context.useHandle ? '<div class="handle"></div>' : ''}
-            ${context.useTitle  ? `<div class="title">${node.title}</div>` : ''}
+            ${context.style === 'handle' ? `<div class="handle" style="background-image: url('${SvgAnchor}');"></div>` : ''}
             ${ports.map(port => (`<div 
                 class="port" id="${this.portSign(port)}" 
                 style="left: ${port.x - 5}px; top: ${port.y - 5}px; width: 10px; height: 10px;">

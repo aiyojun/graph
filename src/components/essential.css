@@ -38,7 +38,6 @@
     position: absolute;
     cursor: crosshair;
     box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.05);
-    background-color: skyblue;
 }
 
 .wire {
@@ -48,10 +47,20 @@
 .frame {
     position: absolute;
     background-color: rgba(0, 191, 255, 0.25);
+    z-index: 10;
 }
 
 .handle {
     cursor: move;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 16px;
+    height: 16px;
+    z-index: 9;
+    background-repeat: no-repeat;
+    background-size: 16px 16px;
+    background-position: center center;
 }
 
 .title {
