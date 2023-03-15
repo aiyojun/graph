@@ -50,6 +50,7 @@ I will post english description and documentation, soon~~~
 | 42  | Node layer上的事件管理优化           |     |            |
 | 43  | ~~更灵活的Port配置(动态绑定端口)~~           | ✔   | 2023-03-13 |
 | 44  | 完整的snapshot功能支持              |     |            |
+| 45  | electron跨域http请求             |     |            |
 
 Node仅作为拖拽式容器存在，您可以将任何元素置入创建好的Node节点中，无论其多复杂。
 
