@@ -4,14 +4,17 @@ import { scale2d } from "../jlib/matrix"
 import { wirePath } from "../jlib/svg"
 import './essential.css'
 import SvgAnchor from './anchor.svg'
+import type {
+    BasicContext,
+    BasicPort,
+    BasicWire,
+    Group,
+    Task,
+    GraphJson,
+    Interceptor
+} from './types.d'
 
 export const uuidv4 = () => v4().replaceAll('-', '')
-export type Context = { scale: number; keepSilence: boolean; style: 'default' | 'handle'; lock: 'ctrl' | 'alt' | 'none'; }
-export type BasicPort = { uuid?: string; type: number; i: number; x?: number; y?: number; }
-export type Group = { uuid: string; x: number; y: number; w:number; h: number; follower: Array<string>; }
-export type BasicWire = { from: BasicPort; to: BasicPort; }
-export type Task = { type: number; cursor: Point; }
-export type GraphJson = { nodes: Array<BasicNode>, wires: Array<BasicWire>; }
 const setStyleBox = (el: HTMLElement, x: number, y: number, w: number, h: number) =>
 { el.style.top = `${y}px`; el.style.left = `${x}px`; el.style.width = `${w}px`; el.style.height = `${h}px`; }
 
@@ -29,11 +32,6 @@ export class Wrapper<T> {
     { const w = new Wrapper(target); w.put(el); return w }
 }
 
-export type Node = Wrapper<BasicNode>
-export type Wire = Wrapper<BasicWire>
-export type Port = Wrapper<BasicPort>
-
-export type Interceptor = { filter: Function; then: Function }
 function reactive<T extends Object>(target: T, interceptors: Array<Interceptor>) {
     return new Proxy(target, {
         get(target: T, p: string | symbol, receiver: any): any { return target[p] },
@@ -55,7 +53,7 @@ function reactive<T extends Object>(target: T, interceptors: Array<Interceptor>)
     })
 }
 
-const buildGeometryInterceptors: (el: HTMLElement, context: Context) => Array<Interceptor> = (el, context) => ([
+const buildGeometryInterceptors: (el: HTMLElement, context: BasicContext) => Array<Interceptor> = (el, context) => ([
     { filter: k => k ==='x', then: v => el.style.left   = `${v}px` },
     { filter: k => k ==='y', then: v => el.style.top    = `${v}px` },
     { filter: k => k ==='w', then: v => el.style.width  = `${v * context.scale}px` },
@@ -73,65 +71,77 @@ export class BasicNode {
 
 export class Graph {
     root: HTMLElement
+    rootRect: DOMRect
     palette: SVGElement
     iWire: SVGPathElement = null
     frame: HTMLDivElement = null
     task: Task = { type: -1, cursor: { x: 0, y: 0 } }
     nodes: Map<string, Wrapper<BasicNode>> = new Map()
-    ports: Map<string, BasicPort> = new Map()
-    wports: Map<string, Wrapper<BasicPort>> = new Map()
+    ports: Map<string, BasicPort> = new Map() // Whether it's necessary to manage external ports?
     wires: Array<Wrapper<BasicWire>> = []
     groups: Map<string, Wrapper<Group>> = new Map()
     linkageValidations: Array<(_1: BasicPort, _2: BasicPort) => boolean> = []
+    // TODO: add more snapshots management functions(from entire graph)
     snapshotOfNodes: Map<string, BasicNode> = new Map()
     snapshotOfGroups: Map<string, Group> = new Map()
-    context: Context = { scale: 1.0, keepSilence: false, style: 'handle', lock: 'none' }
+    context: BasicContext = {
+        scale: 1.0,
+        keepSilence: false,
+        style: 'handle',
+        lock: 'none',
+        title: true,
+        readonly: false,
+        theme: 'bright',
+        selection: false,
+    }
     begin: BasicPort
     animation: HTMLStyleElement = null
     mount(el: HTMLElement) {
         this.root = el
+        this.root.innerHTML = ``
         this.root.className = 'graph overlay'
-        this.root.insertAdjacentHTML('afterbegin', `<svg xmlns="http://www.w3.org/2000/svg" shape-rendering="auto" class="overlay palette"></svg>`)
+        this.rootRect = this.root.getBoundingClientRect()
+        this.root.insertAdjacentHTML('afterbegin',
+            `<svg xmlns="http://www.w3.org/2000/svg" shape-rendering="auto" class="overlay palette"></svg>`)
         this.palette = this.root.firstElementChild as SVGElement
-        const self = this
-        this.context = new Proxy(this.context, {
-            get(target: Context, p: string | symbol, receiver: any): any { return target[p] },
-            set(target: Context, p: string | symbol, newValue: any, receiver: any): boolean {
-                target[p] = newValue
-                switch (p) {
-                    case 'scale': self.driveZoom(self, target[p]); break;
-                }
-                return true
-            }})
+        this.context = reactive(this.context,
+            [{ filter: k => k === 'scale', then: v => this.driveZoom(this, v) }])
         document.head.insertAdjacentHTML('beforeend', `<style></style>`)
         this.animation = document.head.lastElementChild as HTMLStyleElement
         this.root.addEventListener('mousemove', e => this.handleMouseMove(e))
         this.root.addEventListener('mousedown', e => this.handleMouseDownOnGraph(e))
         this.root.addEventListener('wheel', e => this.handleWheel(e), { passive: false })
         window.addEventListener('mouseup', e => this.handleMouseUp(e))
-        this.updateAnimation()
+        this.updateAnimation() // first invoking ...
         return this
     }
-    theme: string = 'bright'
-    getTheme = () => this.theme
+    clear() {
+        this.nodes.clear()
+        this.groups.clear()
+        this.wires = []
+        this.ports.clear()
+        this.snapshotOfGroups.clear()
+        this.snapshotOfNodes.clear()
+        this.mount(this.root)
+        return this
+    }
+    getTheme = () => this.context.theme
     useTheme(name: string) {
-        if (this.theme === name) return this
-        if (name === 'dark') {
-            this.removeTheme()
-            const link = document.createElement('link')
-            link.href  = 'theme-dark.css'
-            link.type  = 'text/css'
-            link.rel   = 'stylesheet'
-            document.head.appendChild(link)
-            this.theme = name
-        } else {
-            this.removeTheme()
-            this.theme = 'bright'
-        }
+        if (this.context.theme === name) return this
+        this.removeTheme()
+        const link = document.createElement('link')
+        link.href  = `theme-${name}.css`
+        link.type  = 'text/css'
+        link.rel   = 'stylesheet'
+        document.head.appendChild(link)
+        this.context.theme = name
         return this
     }
-    useContext(props: Record<string, unknown>)
-    { Array.from(Object.keys(props)).forEach(k => { if (k in this.context) this.context[k] = props[k] }); return this }
+    useContext(props: Record<string, unknown>) {
+        Array.from(Object.keys(props)).forEach(k => { if (k in this.context) this.context[k] = props[k] })
+        this.useTheme(this.context.theme)
+        return this
+    }
     removeTheme() {
         const es: Array<HTMLElement> = []
         for (let i = 0; i < document.head.children.length; i++) {
@@ -143,9 +153,6 @@ export class Graph {
         }
         es.forEach(e => e.remove())
     }
-    // readonly() {}
-    // snapshot() {}
-    // inject() {}
     parse(data: GraphJson) {
         data.nodes.forEach(node => { this.createNode({ x: node.x, y: node.y, w: 200, h: 80, uuid: node.uuid, ports: node.ports }) })
         data.wires.forEach(wire => { this.connect(wire.from, wire.to) })
@@ -176,18 +183,21 @@ export class Graph {
     avoidSamePort() { return this.addWireValidation((from: BasicPort, to: BasicPort) => from.uuid === to.uuid && from.type === to.type && from.i === to.i) }
     avoidSameNode() { return this.addWireValidation((from: BasicPort, to: BasicPort) => from.uuid === to.uuid) }
     avoidSameType() { return this.addWireValidation((from: BasicPort, to: BasicPort) => from.type === to.type) }
-    createNode(props?: Record<string, unknown>): Wrapper<BasicNode> {
-        let node: BasicNode = { uuid: uuidv4(), x: 0, y: 0, w: undefined, h: undefined }
+    createNode(props?: Record<string, unknown>, ports?: Array<BasicPort>): Wrapper<BasicNode> {
+        let node: BasicNode = { title: '', uuid: uuidv4(), x: 0, y: 0, w: undefined, h: undefined }
         if (!this.context.keepSilence) {
             console.info(`create node :`)
             console.info(node)
         }
         Array.from(Object.keys(props)).forEach(k => { if (k in node) node[k] = props[k] })
-        const ports = this.buildDefaultPorts(node,
-            <number>('inPortNumber'  in props ? props['inPortNumber' ] : 0),
-            <number>('outPortNumber' in props ? props['outPortNumber'] : 0),
-            <'horizontal' | 'vertical'>('permutation' in props ? props['permutation'] : 'horizontal'))
-        this.root.insertAdjacentHTML('beforeend', this.reuseNodeLayer(this.context, node, ports))
+        if (ports === undefined || ports === null || ports.length === 0) {
+            ports = this.buildDefaultPorts(node,
+                <number>('inPortNumber'  in props ? props['inPortNumber' ] : 0),
+                <number>('outPortNumber' in props ? props['outPortNumber'] : 0),
+                <'horizontal' | 'vertical'>('permutation' in props ? props['permutation'] : 'horizontal'))
+        }
+        ports.forEach(port => port.uuid = node.uuid)
+        this.root.insertAdjacentHTML('beforeend', this.generateNodeFragment(this.context, node, ports))
         const el = this.root.lastElementChild as HTMLDivElement
         node = reactive(node, buildGeometryInterceptors(el, this.context)) // state lift
         const handle = ({ default: () => el, handle: () => el.children[1] })[this.context.style]();
@@ -220,15 +230,10 @@ export class Graph {
         }
         return ports
     }
-    // bindPortTo(node: Node, portEl: HTMLElement, portType: number = 0) {
-    //     const w = Wrapper.bind<BasicPort>({ uuid: node.state.uuid, type: portType, i: node.state.ports.length }, portEl)
-    //     this.wports.set(this.portSign(w.state), w)
-    //     return this
-    // }
     updateWire() {
         for (let i = 0; i < this.wires.length; i++) {
             const wire = this.wires[i]
-            wire.ref().setAttribute('d', this.pathd(this.context.scale,
+            wire.ref().setAttribute('d', this.path_d(this.context.scale,
                 this.convert(this, this.nodes.get(wire.state.from.uuid).state, wire.state.from),
                 this.convert(this, this.nodes.get(wire.state.to.uuid).state, wire.state.to)))
         }
@@ -241,7 +246,7 @@ export class Graph {
             }
         }
         const wire = Wrapper.createBy<BasicWire>({from, to}, (wire: BasicWire) => this.wireSign(wire))
-        this.palette.insertAdjacentHTML('beforeend', this.$wire(this,
+        this.palette.insertAdjacentHTML('beforeend', this.generateWireFragment(this.context,
             this.convert(this, this.nodes.get(wire.state.from.uuid).state, wire.state.from),
             this.convert(this, this.nodes.get(wire.state.to.uuid).state, wire.state.to),
             this.wireSign(wire.state)))
@@ -254,7 +259,7 @@ export class Graph {
         const yMax = Math.max(...(nodes.map(node => node.y + node.h * this.context.scale)))
         const g: Group = { uuid: uuidv4(), x: xMin - bias, y: yMin - bias, w: xMax - xMin + bias * 2, h: yMax - yMin + bias * 2, follower: nodes.map(x => x.uuid) }
         nodes.forEach(node => node.group = g.uuid)
-        this.root.insertAdjacentHTML('beforeend', this.$group(this, g))
+        this.root.insertAdjacentHTML('beforeend', this.generateGroupFragment(this.context, g))
         const el = this.root.lastElementChild as HTMLDivElement
         el.addEventListener('mousedown', e => this.handleMouseDownOnGroup(e, g.uuid))
         const wrapper = Wrapper.createBy(reactive(g, buildGeometryInterceptors(el, this.context)), g => `group@${g.uuid}`)
@@ -275,8 +280,8 @@ export class Graph {
             e.preventDefault()
             e.stopPropagation()
             this.begin = port
-            this.palette.insertAdjacentHTML('afterbegin', this.$wire(this, this.convert(this, node, port),
-                { x: e.clientX - this.root.offsetLeft, y: e.clientY - this.root.offsetTop }, "iwire@" + uuidv4()))
+            this.palette.insertAdjacentHTML('afterbegin', this.generateWireFragment(this.context, this.convert(this, node, port),
+                { x: e.clientX - this.rootRect.x, y: e.clientY - this.rootRect.y }, "iwire@" + uuidv4()))
             this.iWire = this.palette.firstElementChild as SVGPathElement
             this.task = { type: 2, cursor: { x: e.clientX, y: e.clientY } }
         }
@@ -332,10 +337,10 @@ export class Graph {
             node.state.x = snapshot.x + e.clientX - this.task.cursor.x
             node.state.y = snapshot.y + e.clientY - this.task.cursor.y
         } else if (e.buttons === 1 && this.task.type === 2) {
-            this.iWire.setAttribute('d', this.pathd(
+            this.iWire.setAttribute('d', this.path_d(
                 this.context.scale, this.convert(this, this.nodes.get(this.begin.uuid).state, this.begin),
-                { x: e.clientX - this.root.offsetLeft, y: e.clientY - this.root.offsetTop }))
-        } else if (e.buttons === 1 && this.task.type === 4) {
+                { x: e.clientX - this.rootRect.x, y: e.clientY - this.rootRect.y }))
+        } else if (e.buttons === 1 && this.task.type === 4 && this.context.selection) {
             this.setFrame(e)
         } else if (e.buttons === 1 && this.task.type === 5) {
             this.moveGroup(e)
@@ -374,7 +379,7 @@ export class Graph {
         const pass = ({ ctrl: () => e.ctrlKey, alt: () => e.altKey, none: () => true })[this.context.lock]()
         if (!pass) return
         e.preventDefault()
-        const pivot = { x: e.clientX - this.root.offsetLeft, y: e.clientY - this.root.offsetTop }
+        const pivot = { x: e.clientX - this.rootRect.x, y: e.clientY - this.rootRect.y }
         scale2d(pivot, this.context.scale, -e.deltaY, (newScale, transform) => {
             this.context.scale = newScale
             this.nodes.forEach(node => {
@@ -389,8 +394,7 @@ export class Graph {
         this.updateWire()
         this.updateAnimation()
     }
-    //
-    pathd = (scale: number, from: Point, to: Point) => {
+    path_d = (scale: number, from: Point, to: Point) => {
         const arg = {p1dir: 'right', p2dir: 'left', p2x: 200, p1y: 200, p1x: 600, p2y: 300, scale: scale, delta: 30, wire: 'curve', edge: 6};
         arg.p1x = from.x; arg.p1y = from.y; arg.p2x = to.x; arg.p2y = to.y; return wirePath(arg)}
     driveZoom(graph: Graph, scale: number) {
@@ -398,24 +402,35 @@ export class Graph {
         graph.nodes .forEach(node  =>  node.ref().style.transform = `scale(${scale})`)
         graph.groups.forEach(group => group.ref().style.transform = `scale(${scale})`)
     }
-    reuseNodeLayer(context: Context, node: BasicNode, ports: Array<BasicPort>) {
+    generateNodeFragment(context: BasicContext, node: BasicNode, ports: Array<BasicPort>) {
         const style = `left: ${node.x}px; top: ${node.y}px;`
             + `${(node.w !== undefined && node.w > 0) ? `width: ${node.w}px;` : ''}`
             + `${(node.h !== undefined && node.h > 0) ? `height: ${node.h}px;` : ''}`
             + `transform: scale(${context.scale});`
             + `${context.style === 'handle' ? '' : 'cursor: move;'}`
         return (`<div id="node@${node.uuid}" class="node" style="${style}">
-            <div class="custom-node-background"></div>
+            <div class="custom-node"></div>
             ${context.style === 'handle' ? `<div class="handle" style="background-image: url('${SvgAnchor}');"></div>` : ''}
+            ${context.title ? `<div class="title"><span>${node.title || ''}</span></div>` : ''}
             ${ports.map(port => (`<div 
                 class="port" id="${this.portSign(port)}" 
                 style="left: ${port.x - 5}px; top: ${port.y - 5}px; width: 10px; height: 10px;">
-                <div class="custom-port-background"></div>
+                <div class="custom-port"></div>
             </div>`)).join('')}
         </div>`)
     }
-    $wire = (graph: Graph, from: Point, to: Point, id: string) => (`<path class="wire dynamic-dash" id="${id}" fill="none" d="${this.pathd(graph.context.scale, from, to)}"></path>`)
-    $group = (graph: Graph, node: Group) => (`<div id="group@${node.uuid}" class="group" style="top: ${node.y}px; left: ${node.x}px; width: ${node.w}px; height: ${node.h}px; transform: scale(${graph.context.scale});"><div class="custom-group-background"></div></div>`)
+    generateWireFragment(context: BasicContext, from: Point, to: Point, id: string) {
+        return `<path class="wire dynamic-dash" id="${id}" fill="none" d="${this.path_d(context.scale, from, to)}"></path>`
+    }
+    generateGroupFragment(context: BasicContext, group: Group) {
+        const style = `top: ${group.y}px; left: ${group.x}px; `
+            + `width: ${group.w}px; height: ${group.h}px; `
+            + `transform: scale(${context.scale});`
+        return `<div id="group@${group.uuid}" 
+                     class="group" style="${style}">
+                     <div class="custom-group"></div>
+                </div>`
+    }
     portSign = (port: BasicPort) => (`port@${port.type}@${port.i}@${port.uuid}`)
     wireSign = (wire: BasicWire) => (`wire@${wire.from.type}@${wire.from.i}@${wire.from.uuid}@${wire.to.type}@${wire.to.i}@${wire.to.uuid}`)
     convert  = (graph: Graph, node: BasicNode, port: BasicPort) => ({ x: node.x + port.x * graph.context.scale, y: node.y + port.y * graph.context.scale })
@@ -425,12 +440,12 @@ export class Graph {
                 this.root.insertAdjacentHTML('beforeend', `<div class="frame"></div>`)
                 this.frame = this.root.lastElementChild as HTMLDivElement
             }
-            setStyleBox(this.frame, this.task.cursor.x - this.root.offsetLeft, this.task.cursor.y - this.root.offsetTop, 0, 0)
+            setStyleBox(this.frame, this.task.cursor.x - this.rootRect.x, this.task.cursor.y - this.rootRect.y, 0, 0)
             return
         }
         if (this.frame !== null) {
-            const c1 = this.task.cursor.x - this.root.offsetLeft; const c2 = e.clientX - this.root.offsetLeft;
-            const c3 = this.task.cursor.y - this.root.offsetTop ; const c4 = e.clientY - this.root.offsetTop;
+            const c1 = this.task.cursor.x - this.rootRect.x; const c2 = e.clientX - this.rootRect.x;
+            const c3 = this.task.cursor.y - this.rootRect.y; const c4 = e.clientY - this.rootRect.y;
             const begin = { x: Math.min(c1, c2), y: Math.min(c3, c4) }
             const end   = { x: Math.max(c1, c2), y: Math.max(c3, c4) }
             setStyleBox(this.frame, begin.x, begin.y, Math.abs(end.x - begin.x), Math.abs(end.y - begin.y))
