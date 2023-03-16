@@ -78,6 +78,18 @@ Node仅作为拖拽式容器存在，您可以将任何元素置入创建好的N
 6. react-flow-chart
 7. 忘了...还有个强大的可定制性强的项目
 
+## 性能
+
+单节点移动的耗时对比
+
+Graph engine:
+
+![image](https://github.com/aiyojun/graph/blob/master/performance/graph-engine.png)
+
+React flow:
+
+![image](https://github.com/aiyojun/graph/blob/master/performance/reactflow.png)
+
 ## 应用
 
 Graph是一切图的抽象，这也是我给她取名Graph的原因，她就是Graph(图)！
