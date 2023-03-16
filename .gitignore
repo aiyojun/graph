@@ -1,9 +1,7 @@
-.idea/
-
-dist/
-
 node_modules/
 
 package-lock.json
 
-app/*.js
+dist/
+
+.idea/

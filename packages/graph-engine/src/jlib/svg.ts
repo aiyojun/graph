@@ -27,8 +27,8 @@ export function wirePath(obj = {
         let point1 = [obj.p1x, obj.p1y];
         let point2 = [obj.p2x, obj.p2y];
         path = `M${point1[0].toFixed()} ${point1[1].toFixed()} ` +
-            `C${(point1[0] + point2[0]).toFixed() / 2} ${point1[1].toFixed()}` +
-            ` ${(point1[0] + point2[0]).toFixed() / 2} ${point2[1].toFixed()}` +
+            `C${(point1[0] + point2[0]) / 2} ${point1[1].toFixed()}` +
+            ` ${(point1[0] + point2[0]) / 2} ${point2[1].toFixed()}` +
             ` ${point2[0].toFixed()} ${point2[1].toFixed()}`
         ;
     } else if (obj.wire === 'curve') {

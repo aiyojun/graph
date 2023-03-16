@@ -37,7 +37,7 @@ function ScaleMatrix() {
 
 export const scaleMatrix = new ScaleMatrix();
 
-export const scale2d = (pivot, iScale, delta, callback = () => {}) => {
+export const scale2d = (pivot: {x: number, y: number}, iScale: number, delta: number, callback: Function = () => {}) => {
     let scale = iScale
     const limit = delta < 0 ? 1 : 1000;
     const f = delta < 0 ? 1 : -1

@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="240" height="240"
+     viewBox="0 0 240 240" fill="#33A3DC" stroke="#33A3DC">
+    <defs>
+        <rect id="path_0" x="0" y="0" width="240" height="240"/>
+    </defs>
+    <g opacity="1" transform="translate(0 0)  rotate(0 120 120)">
+        <rect fill="#FFFFFF" opacity="0" transform="translate(0 0)  rotate(0 120 120)" x="0" y="0" width="240"
+              height="240"/>
+        <mask id="bg-mask-0" fill="white">
+            <use xlink:href="#path_0"></use>
+        </mask>
+        <g mask="url(#bg-mask-0)">
+            <path id="直线 1" transform="translate(98 26)  rotate(0 11.5 47.5)" opacity="1" d=""/>
+            <path id="直线 1" style="stroke-width:10; stroke-opacity:1; stroke-dasharray:0 0"
+                  transform="translate(98 26)  rotate(0 11.5 47.5)" d="M23,95L0,0 "/>
+            <path id="直线 1" transform="translate(124 59)  rotate(0 41 28.5)" opacity="1" d=""/>
+            <path id="直线 1" style="stroke-width:10; stroke-opacity:1; stroke-dasharray:0 0"
+                  transform="translate(124 59)  rotate(0 41 28.5)" d="M0,57L82,0 "/>
+            <path id="直线 1" transform="translate(130 128)  rotate(0 30 32.5)" opacity="1" d=""/>
+            <path id="直线 1" style="stroke-width:10; stroke-opacity:1; stroke-dasharray:0 0"
+                  transform="translate(130 128)  rotate(0 30 32.5)" d="M60,65L0,0 "/>
+            <path id="直线 1" transform="translate(64 122)  rotate(0 27.5 41.5)" opacity="1" d=""/>
+            <path id="直线 1" style="stroke-width:10; stroke-opacity:1; stroke-dasharray:0 0"
+                  transform="translate(64 122)  rotate(0 27.5 41.5)" d="M0,83L55,0 "/>
+            <path id="直线 1" transform="translate(26 97)  rotate(0 47 12.5)" opacity="1" d=""/>
+            <path id="直线 1" style="stroke-width:10; stroke-opacity:1; stroke-dasharray:0 0"
+                  transform="translate(26 97)  rotate(0 47 12.5)" d="M94,25L0,0 "/>
+            <path id="圆形 1" fill-rule="evenodd" transform="translate(72 1)  rotate(0 26 26)"
+                  opacity="1"
+                  d="M26,0C11.64,0 0,11.64 0,26C0,40.36 11.64,52 26,52C40.36,52 52,40.36 52,26C52,11.64 40.36,0 26,0Z "/>
+            <path id="圆形 1" fill-rule="evenodd" transform="translate(169 24)  rotate(0 35 35)"
+                  opacity="1"
+                  d="M35,0C15.67,0 0,15.67 0,35C0,54.33 15.67,70 35,70C54.33,70 70,54.33 70,35C70,15.67 54.33,0 35,0Z "/>
+            <path id="圆形 1" fill-rule="evenodd" transform="translate(29 169)  rotate(0 35 35)"
+                  opacity="1"
+                  d="M35,0C15.67,0 0,15.67 0,35C0,54.33 15.67,70 35,70C54.33,70 70,54.33 70,35C70,15.67 54.33,0 35,0Z "/>
+            <path id="圆形 1" fill-rule="evenodd" transform="translate(164 166)  rotate(0 26 26)"
+                  opacity="1"
+                  d="M26,0C11.64,0 0,11.64 0,26C0,40.36 11.64,52 26,52C40.36,52 52,40.36 52,26C52,11.64 40.36,0 26,0Z "/>
+            <path id="圆形 1" fill-rule="evenodd" transform="translate(75 76)  rotate(0 45 45)"
+                  opacity="1"
+                  d="M45,0C20.15,0 0,20.15 0,45C0,69.85 20.15,90 45,90C69.85,90 90,69.85 90,45C90,20.15 69.85,0 45,0Z "/>
+            <path id="圆形 1" fill-rule="evenodd" transform="translate(1 71)  rotate(0 26 26)"
+                  opacity="1"
+                  d="M26,0C11.64,0 0,11.64 0,26C0,40.36 11.64,52 26,52C40.36,52 52,40.36 52,26C52,11.64 40.36,0 26,0Z "/>
+        </g>
+    </g>
+</svg>
