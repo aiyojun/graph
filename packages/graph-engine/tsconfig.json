@@ -6,9 +6,12 @@
       "es2021"
     ],
     "module": "commonjs",
-    "typeRoots": [],
+    "typeRoots": [
+      "src", "src/jlib"
+    ],
     "types": [],
     "declaration": true,
+    "declarationDir": "@types/graph-engine",
     "outDir": "./dist",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,

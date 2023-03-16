@@ -4,4 +4,6 @@ package-lock.json
 
 dist/
 
+@types/
+
 .idea/

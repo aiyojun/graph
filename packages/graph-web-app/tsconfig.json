@@ -6,8 +6,10 @@
       "es2021"
     ],
     "module": "umd",
-    "typeRoots": [],
-    "types": [],
+    "typeRoots": [
+      "node_modules/graph-engine/@types"
+    ],
+    "types": ["graph-engine"],
     "declaration": true,
     "outDir": "./dist",
     "esModuleInterop": true,
