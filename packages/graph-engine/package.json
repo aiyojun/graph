@@ -6,7 +6,7 @@
   "homepage": "https://github.com/aiyojun/graph/tree/main/packages/graph-engine#readme",
   "license": "ISC",
   "main": "src/index.ts",
-  "types": "dist/index.d.ts",
+  "types": "@types/graph-engine/index.d.ts",
   "publishConfig": {
     "registry": "https://registry.npm.org/"
   },

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npx lerna link && npx lerna run build",
+    "build": "npx lerna run build && npx lerna link && node scripts/buildTypes.js graph-engine",
     "link": "npx lerna link",
     "web-app": "npx lerna run --scope=graph-web-app preview",
     "local-app": "npx lerna run --scope=graph-electron-app app",
@@ -25,7 +25,10 @@
     "lerna": "^6.5.1"
   },
   "workspaces": [
-    "packages/*"
+    "packages/graph-engine",
+    "packages/graph-web-app",
+    "packages/graph-electron-app",
+    "packages/@types/graph-engine"
   ],
   "dependencies": {
     "electron": "^23.1.3"
