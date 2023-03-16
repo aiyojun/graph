@@ -82,10 +82,6 @@ Node仅作为拖拽式容器存在，您可以将任何元素置入创建好的N
 
 单节点移动的耗时对比。
 
-Graph engine:
-
-![image](https://github.com/aiyojun/graph/blob/master/performance/graph-engine.png)
-
 React flow:
 
 ![image](https://github.com/aiyojun/graph/blob/master/performance/reactflow.png)
@@ -93,6 +89,10 @@ React flow:
 Vue flow:
 
 ![image](https://github.com/aiyojun/graph/blob/master/performance/vue-flow.png)
+
+Graph engine:
+
+![image](https://github.com/aiyojun/graph/blob/master/performance/graph-engine.png)
 
 对于react flow而言，主要是因为使用了react框架，所以调用层级较多。而Graph无框架侵入，除非必要，无任何其他调用。
 如果你有渲染海量节点数据到Graph的需求，那么Graph engine是最好的选择。
