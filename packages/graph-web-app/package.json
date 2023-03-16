@@ -12,8 +12,9 @@
     "url": "git+https://github.com/aiyojun/graph.git"
   },
   "scripts": {
-    "build": "vite build",
-    "preview": "vite preview"
+    "build": "vite build -c vite.config.js",
+    "preview": "vite preview -c vite.config.js --port 8080",
+    "reload": "npm run build && npm run preview"
   },
   "bugs": {
     "url": "https://github.com/aiyojun/graph/issues"

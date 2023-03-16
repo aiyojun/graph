@@ -5,7 +5,7 @@ import { wirePath } from "./jlib/svg"
 import './essential.css'
 import SvgAnchor from './assets/anchor.svg'
 
-export type BasicContext = {
+export interface BasicContext {
     scale: number;
     keepSilence: boolean;
     style: 'default' | 'handle';
@@ -180,10 +180,16 @@ export class Graph {
         link.rel   = 'stylesheet'
         document.head.appendChild(link)
         this.context.theme = name
+        if (!this.context.keepSilence)
+            console.info(`Use theme: ${this.context.theme}`)
         return this
     }
-    useContext(props: Record<string, unknown>) {
+    useContext(props: BasicContext) {
         Array.from(Object.keys(props)).forEach(k => { if (k in this.context) this.context[k] = props[k] })
+        if (!this.context.keepSilence) {
+            console.info(`Graph context:`)
+            console.info(this.context)
+        }
         this.useTheme(this.context.theme)
         return this
     }

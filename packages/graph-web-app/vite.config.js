@@ -8,6 +8,12 @@ export default defineConfig({
 	root: resolve('.'),
 	base: './',
 	publicDir: resolve('public'),
+	server: {
+		host: '0.0.0.0',
+		port: 8080,
+		hmr: true,
+		open: true
+	},
 	resolve: {
 		alias: {
 			'@': resolve('src'),
@@ -17,11 +23,6 @@ export default defineConfig({
 	plugins: [
 
 	],
-	server: {
-		host: '0.0.0.0',
-		strictPort: true,
-		port: 8080,
-	},
 	build: {
 		outDir: resolve('dist'),
 	}
