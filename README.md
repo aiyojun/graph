@@ -2,6 +2,13 @@
 
 I will post english description and documentation, soon~~~
 
+
+Electron app like this:
+
+![image](https://github.com/aiyojun/graph/blob/master/performance/electron-app.png)
+
+## 功能
+
 完整的中英文名暂未想好。目前，该项目提供一下功能(features)：
 
 | 序号  | 功能描述                         | 完成度 | 时间         |
