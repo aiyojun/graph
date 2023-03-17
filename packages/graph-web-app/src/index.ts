@@ -1,4 +1,4 @@
-import {Graph, CyberPanel} from 'graph-engine'
+import {Graph, CyberPanel, inject} from 'graph-engine'
 
 const graph = new Graph()
     .mount(document.getElementById('root'))
@@ -20,8 +20,10 @@ const node2 = graph.createNode({
     outPortNumber: 3
 })
 
-document.body.insertAdjacentHTML('beforeend', `<div style="box-shadow: 0 0 10px 5px rgba(0,0,0,0.25); position: fixed; top: 0; bottom: 0; right: 0; width: 240px; background: #333;"><div id="panel"></div></div>`)
-const panel = document.getElementById('panel') as HTMLElement
+const panel = inject(
+    document.body,
+    `<div style="box-shadow: 0 0 10px 5px rgba(0,0,0,0.25); position: fixed; top: 0; bottom: 0; right: 0; width: 240px; background: #333;"><div id="panel"></div></div>`
+) as HTMLElement
 
 new CyberPanel().mount(panel, {
     type: 'VLinearLayout',
