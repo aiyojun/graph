@@ -1,7 +1,7 @@
+// The light-weight ui framework, published with graph-engine!
 import './panel.css'
-/**
- * The light-weight ui panel, provided for graph-engine testing!
- */
+import {inject} from "./jlib";
+
 export class Descriptor {
     type: string;
     uuid?: string = '';
@@ -13,7 +13,6 @@ export class Descriptor {
         placeholder?: string;
         click?: (_1: any) => void;
     };
-    // el?: HTMLElement;
     children?: Array<Descriptor> = [];
 }
 
@@ -58,35 +57,29 @@ export class CyberPanel {
     pile(el: HTMLElement, e: Descriptor, width: string): HTMLElement {
         let real = null
         if (e.type === 'input') {
-            el.insertAdjacentHTML('beforeend', `<input style="width: ${width};" class="panel-e" value="${e.value}" placeholder="${e.specific.placeholder}"/>`)
-            real = el.lastElementChild
+            real = inject(el, `<input style="width: ${width};" class="panel-e" value="${e.value}" placeholder="${e.specific.placeholder}"/>`)
             this.refs.set(e.name, real)
             this.types.set(e.name, e.type)
         } else if (e.type === 'number') {
-            el.insertAdjacentHTML('beforeend', `<input style="width: ${width};" class="panel-e" value="${e.value}" placeholder="${e.specific.placeholder}" type="number"/>`)
-            real = el.lastElementChild
+            real = inject(el, `<input style="width: ${width};" class="panel-e" value="${e.value}" placeholder="${e.specific.placeholder}" type="number"/>`)
             this.refs.set(e.name, real)
             this.types.set(e.name, e.type)
         } else if (e.type === 'textarea') {
-            el.insertAdjacentHTML('beforeend', `<textarea style="width: ${width};" class="panel-e" placeholder="${e.specific.placeholder}">${e.value}</textarea>`)
-            real = el.lastElementChild
+            real = inject(el, `<textarea style="width: ${width};" class="panel-e" placeholder="${e.specific.placeholder}">${e.value}</textarea>`)
             this.refs.set(e.name, real)
             this.types.set(e.name, e.type)
         } else if (e.type === 'button') {
-            el.insertAdjacentHTML('beforeend', `<div style="width: ${width};" class="panel-e glass pointer">${e.label}</div>`)
-            real = el.lastElementChild
+            real = inject(el, `<div style="width: ${width};" class="panel-e glass pointer">${e.label}</div>`)
             if (e.specific.click !== undefined && e.specific.click !== null) {
                 real.addEventListener('click', () => e.specific.click(this.valMap()))
             }
         } else if (e.type === 'VLinearLayout') {
-            el.insertAdjacentHTML('beforeend', `<div style="width: ${width};" class="panel-v-container"></div>`)
-            real = el.lastElementChild
+            real = inject(el, `<div style="width: ${width};" class="panel-v-container"></div>`)
         } else if (e.type === 'HLinearLayout') {
-            el.insertAdjacentHTML('beforeend', `<div style="width: ${width};" class="panel-h-container"></div>`)
+            real = inject(el, `<div style="width: ${width};" class="panel-h-container"></div>`)
             real = el.lastElementChild
         } else if (e.type === 'label') {
-            el.insertAdjacentHTML('beforeend', `<div style="width: ${width};" class="panel-e panel-label">${e.label}</div>`)
-            real = el.lastElementChild
+            real = inject(el,`<div style="width: ${width};" class="panel-e panel-label">${e.label}</div>`)
         } else {
             return null
         }

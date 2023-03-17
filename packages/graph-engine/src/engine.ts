@@ -1,7 +1,5 @@
 import { v4 } from 'uuid'
-import { Point } from "./jlib/ds";
-import { scale2d } from "./jlib/matrix"
-import { wirePath } from "./jlib/svg"
+import {inject, injectFront, Point, scale2d, wirePath} from "./jlib";
 import './essential.css'
 import SvgAnchor from './assets/anchor.svg'
 
@@ -162,14 +160,11 @@ export class Graph {
         this.root.className = 'graph overlay'
         this.rootRect = this.root.getBoundingClientRect()
         if (this.context.background === 'dot')
-            this.root.insertAdjacentHTML('afterbegin', this.generateBackPanel())
-        this.root.insertAdjacentHTML('afterbegin',
-            `<svg xmlns="http://www.w3.org/2000/svg" shape-rendering="auto" class="overlay palette"></svg>`)
-        this.palette = this.root.firstElementChild as SVGElement
+            injectFront(this.root, this.generateBackPanel())
+        this.palette = inject(this.root, `<svg xmlns="http://www.w3.org/2000/svg" shape-rendering="auto" class="overlay palette"></svg>`) as SVGElement
         this.context = reactive(this.context,
             [{ filter: k => k === 'scale', then: v => this.driveZoom(this, v) }])
-        document.head.insertAdjacentHTML('beforeend', `<style></style>`)
-        this.animation = document.head.lastElementChild as HTMLStyleElement
+        this.animation = inject(document.head, `<style></style>`) as HTMLStyleElement
         this.root.addEventListener('mousemove', e => this.handleMouseMove(e))
         this.root.addEventListener('mousedown', e => this.handleMouseDownOnGraph(e))
         this.root.addEventListener('wheel', e => this.handleWheel(e), { passive: false })
@@ -251,8 +246,7 @@ export class Graph {
                 <'horizontal' | 'vertical'>('permutation' in props ? props['permutation'] : 'horizontal'))
         }
         ports.forEach(port => { port.uuid = node.uuid; this.ports.set(this.portSign(port), port) })
-        this.root.insertAdjacentHTML('beforeend', this.generateNodeFragment(this.context, node, ports))
-        const el = this.root.lastElementChild as HTMLDivElement
+        const el = inject(this.root, this.generateNodeFragment(this.context, node, ports)) as HTMLDivElement
         node = reactive(node, buildGeometryInterceptors(el, this.context)) // state lift
         const handle = ({ default: () => el, handle: () => el.children[1] })[this.context.style]();
         // events binding
@@ -300,7 +294,7 @@ export class Graph {
             }
         }
         const wire = Wrapper.createBy<BasicWire>({from, to}, (wire: BasicWire) => this.wireSign(wire))
-        this.palette.insertAdjacentHTML('beforeend', this.generateWireFragment(this.context,
+        inject(this.palette, this.generateWireFragment(this.context,
             this.convert(this, this.nodes.get(wire.state.from.uuid).state, wire.state.from),
             this.convert(this, this.nodes.get(wire.state.to.uuid).state, wire.state.to),
             this.wireSign(wire.state)))
@@ -313,8 +307,7 @@ export class Graph {
         const yMax = Math.max(...(nodes.map(node => node.y + node.h * this.context.scale)))
         const g: Group = { uuid: uuidv4(), x: xMin - bias, y: yMin - bias, w: xMax - xMin + bias * 2, h: yMax - yMin + bias * 2, follower: nodes.map(x => x.uuid) }
         nodes.forEach(node => node.group = g.uuid)
-        this.root.insertAdjacentHTML('beforeend', this.generateGroupFragment(this.context, g))
-        const el = this.root.lastElementChild as HTMLDivElement
+        const el = inject(this.root, this.generateGroupFragment(this.context, g)) as HTMLDivElement
         el.addEventListener('mousedown', e => this.handleMouseDownOnGroup(e, g.uuid))
         const wrapper = Wrapper.createBy(reactive(g, buildGeometryInterceptors(el, this.context)), g => `group@${g.uuid}`)
         this.groups.set(g.uuid, wrapper)
@@ -334,9 +327,8 @@ export class Graph {
             e.preventDefault()
             e.stopPropagation()
             this.begin = port
-            this.palette.insertAdjacentHTML('afterbegin', this.generateWireFragment(this.context, this.convert(this, node, port),
-                { x: e.clientX - this.rootRect.x, y: e.clientY - this.rootRect.y }, "iwire@" + uuidv4()))
-            this.iWire = this.palette.firstElementChild as SVGPathElement
+            this.iWire = inject(this.palette, this.generateWireFragment(this.context, this.convert(this, node, port),
+                { x: e.clientX - this.rootRect.x, y: e.clientY - this.rootRect.y }, "iwire@" + uuidv4())) as SVGPathElement
             this.task = { type: 2, cursor: { x: e.clientX, y: e.clientY } }
         }
     }
@@ -492,10 +484,8 @@ export class Graph {
     }
     private setFrame = (e: MouseEvent = null) => {
         if (e === null) {
-            if (this.frame === null) {
-                this.root.insertAdjacentHTML('beforeend', `<div class="frame"></div>`)
-                this.frame = this.root.lastElementChild as HTMLDivElement
-            }
+            if (this.frame === null)
+                this.frame = inject(this.root, `<div class="frame"></div>`) as HTMLDivElement
             setStyleBox(this.frame, this.task.cursor.x - this.rootRect.x, this.task.cursor.y - this.rootRect.y, 0, 0)
             return
         }

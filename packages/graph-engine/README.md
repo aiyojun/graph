@@ -4,7 +4,7 @@
 
 ## Usage
 
-```
+```typescript
 import { Graph } from 'graph-engine'
 
 // Create and mount the default theme graph:

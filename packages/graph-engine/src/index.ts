@@ -1,3 +1,9 @@
-import { Graph } from "./engine";
-import { CyberPanel } from "./panel";
-export { Graph, CyberPanel }
+import {Graph, Node, Wire, Port, Group} from "./engine";
+import {CyberPanel, Descriptor} from "./panel";
+import {inject, injectFront} from './jlib'
+
+export {
+    Graph, Node, Wire, Port, Group,
+    CyberPanel, Descriptor,
+    inject, injectFront,
+}
