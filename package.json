@@ -25,6 +25,7 @@
     "lerna": "^6.5.1"
   },
   "workspaces": [
+    "packages/website-graph-intro",
     "packages/graph-engine",
     "packages/graph-web-app",
     "packages/graph-electron-app",

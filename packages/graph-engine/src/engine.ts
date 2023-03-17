@@ -126,6 +126,7 @@ export class Graph {
     private nodes: Map<string, Wrapper<BasicNode>> = new Map()
     private ports: Map<string, BasicPort> = new Map() // Whether it's necessary to manage external ports?
     private wires: Array<Wrapper<BasicWire>> = []
+    private arrows: Array<SVGPathElement> = []
     private groups: Map<string, Wrapper<Group>> = new Map()
     private linkageValidations: Array<(_1: BasicPort, _2: BasicPort) => boolean> = []
     // TODO: add more snapshots management functions(from entire graph)
@@ -175,7 +176,8 @@ export class Graph {
     clear() {
         this.nodes.clear()
         this.groups.clear()
-        this.wires = []
+        this.wires  = []
+        this.arrows = []
         this.ports.clear()
         this.snapshotOfGroups.clear()
         this.snapshotOfNodes.clear()
@@ -281,9 +283,10 @@ export class Graph {
     private updateWire() {
         for (let i = 0; i < this.wires.length; i++) {
             const wire = this.wires[i]
+            const tp = this.convert(this, this.nodes.get(wire.state.to.uuid).state, wire.state.to)
             wire.ref().setAttribute('d', this.path_d(this.context.scale,
-                this.convert(this, this.nodes.get(wire.state.from.uuid).state, wire.state.from),
-                this.convert(this, this.nodes.get(wire.state.to.uuid).state, wire.state.to)))
+                this.convert(this, this.nodes.get(wire.state.from.uuid).state, wire.state.from), tp))
+            this.placeArrow(this.arrows[i], tp, wire.state.to.type)
         }
     }
     connect(from: BasicPort, to: BasicPort) {
@@ -294,11 +297,12 @@ export class Graph {
             }
         }
         const wire = Wrapper.createBy<BasicWire>({from, to}, (wire: BasicWire) => this.wireSign(wire))
+        const tp = this.convert(this, this.nodes.get(wire.state.to.uuid).state, wire.state.to)
         inject(this.palette, this.generateWireFragment(this.context,
-            this.convert(this, this.nodes.get(wire.state.from.uuid).state, wire.state.from),
-            this.convert(this, this.nodes.get(wire.state.to.uuid).state, wire.state.to),
+            this.convert(this, this.nodes.get(wire.state.from.uuid).state, wire.state.from), tp,
             this.wireSign(wire.state)))
         this.wires.push(wire)
+        this.arrows.push(this.createArrow(tp, to.type))
     }
     compose(nodes: Array<BasicNode>, bias: number = 10): Wrapper<Group> {
         const xMin = Math.min(...(nodes.map(node => node.x)))
@@ -530,5 +534,22 @@ export class Graph {
             </pattern>
             <rect x="0" y="0" width="100%" height="100%" fill="url(#pattern-hero)"></rect>
         </svg>`)
+    }
+    private createArrow(p: Point, der: number): SVGPathElement {
+        const frag = `<path class="arrow" d="${this.arrow_d(p, this.context.scale, der)}"/>`
+        return inject(this.palette, frag) as SVGPathElement
+    }
+    private placeArrow(el: SVGPathElement, p: Point, der: number) {
+        el.setAttribute('d', `${this.arrow_d(p, this.context.scale, der)}`)
+    }
+    private arrow_d = ({x, y}, scale, der) => {
+        if (der === 0)
+            return (
+                `M${x} ${y} L${x - 12 * scale} ${y - 6 * scale} ` +
+                `L${x - 8 * scale} ${y} L${x - 12 * scale} ${y + 6 * scale} Z`)
+        else
+            return (
+                `M${x} ${y} L${x + 12 * scale} ${y - 6 * scale} ` +
+                `L${x + 8 * scale} ${y} L${x + 12 * scale} ${y + 6 * scale} Z`)
     }
 }

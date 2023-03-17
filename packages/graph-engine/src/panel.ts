@@ -24,9 +24,11 @@ export class CyberPanel {
         this.root.className = 'overlay'
         this.context = jsonDesc;
         this.render()
+        return this
     }
     render() {
         this.parse(this.root, this.context)
+        return this
     }
     refs: Map<string, HTMLElement> = new Map()
     types: Map<string, string> = new Map()

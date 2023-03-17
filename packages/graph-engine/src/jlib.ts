@@ -186,3 +186,6 @@ export function wirePath(obj = {
     }
     return path;
 }
+export const generateArrow = ({x, y}, scale) => (
+    `M${x} ${y} L${x - 12 * scale} ${y - 6 * scale} ` +
+    `L${x - 8 * scale} ${y} L${x - 12 * scale} ${y + 6 * scale} Z`)
