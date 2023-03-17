@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npx lerna run build && npx lerna link && node scripts/buildTypes.js graph-engine",
+    "types": "node scripts/buildTypes.js graph-engine",
+    "build": "npx lerna link && npx lerna run build && node scripts/buildTypes.js graph-engine",
     "link": "npx lerna link",
     "web-app": "npx lerna run --scope=graph-web-app preview",
     "local-app": "npx lerna run --scope=graph-electron-app app",

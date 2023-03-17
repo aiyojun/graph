@@ -162,7 +162,7 @@ export class Graph {
         this.rootRect = this.root.getBoundingClientRect()
         if (this.context.background === 'dot')
             injectFront(this.root, this.generateBackPanel())
-        this.palette = inject(this.root, `<svg xmlns="http://www.w3.org/2000/svg" shape-rendering="auto" class="overlay palette"></svg>`) as SVGElement
+        this.palette = inject(this.root, `<svg xmlns="http://www.w3.org/2000/svg" stroke-width="${1.6 * this.context.scale}" shape-rendering="auto" class="overlay palette"></svg>`) as SVGElement
         this.context = reactive(this.context,
             [{ filter: k => k === 'scale', then: v => this.driveZoom(this, v) }])
         this.animation = inject(document.head, `<style></style>`) as HTMLStyleElement
@@ -213,6 +213,7 @@ export class Graph {
     parse(data: GraphJson) {
         data.nodes.forEach(node => { this.createNode({ x: node.x, y: node.y, w: node.w, h: node.h, uuid: node.uuid }, node.ports) })
         data.wires.forEach(wire => { this.connect(wire.from, wire.to) })
+        this.updateWire()
         return this
     }
     snapshot(): GraphJson {
@@ -525,6 +526,9 @@ export class Graph {
             100% { stroke-dashoffset: ${- dashWidth * 10}; }
         }
         `
+    }
+    changeWireStyle(type: 'dynamic' | 'static') {
+        this.wires.forEach(wire => {wire.ref().setAttribute('class', `wire ${type === 'dynamic' ? 'dynamic-dash' : ''}`)})
     }
     private generateBackPanel() {
         return (`<svg class="overlay">
