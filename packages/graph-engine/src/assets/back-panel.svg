@@ -1,0 +1,7 @@
+<svg class="react-flow__background" style="position: absolute; width: 100%; height: 100%; top: 0px; left: 0px;">
+    <pattern id="pattern-hero" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"
+             patternTransform="translate(-0.5,-0.5)">
+        <circle cx="0.5" cy="0.5" r="0.5" fill="#91919a"></circle>
+    </pattern>
+    <rect x="0" y="0" width="100%" height="100%" fill="url(#pattern-hero)"></rect>
+</svg>

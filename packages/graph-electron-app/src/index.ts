@@ -9,14 +9,14 @@ const prefix = `/api`
 const createWindow = () => {
     Menu.setApplicationMenu(null)
     win = new BrowserWindow({
-        maximizable: true, width: 800, height: 600,
+        width: 800, height: 600,
         icon: '../../graph-engine/src/assets/favicon.png',
         webPreferences: {
             preload: path.join(__dirname, 'preload.js')
         }
     })
     win.loadFile('../../graph-web-app/dist/index.html')
-    win.maximize()
+    // win.maximize()
     // win.webContents.openDevTools()
 }
 
