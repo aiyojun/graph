@@ -1,48 +1,28 @@
-import './index.css'
-import SvgPlay from '../assets/play.svg'
+import visionPlugins from '../data'
+import {CyberPanel, Graph} from "graph-engine";
 
-export class DescriptionCard {
-    private readonly type: string;
-    private readonly name: string;
-    private readonly desc: string;
-    private root: HTMLElement;
-    constructor(type: string, name: string, desc: string)
-    { this.type = type; this.name = name; this.desc = desc }
-    mount(el: HTMLElement) {
-        this.root = el
-        this.render()
-        return this
+const macron = ['#03c9d5', '#f34676', '#ef7642', '#62d000', '#80CA98'];
+
+export class VisionApp {
+    private readonly graph: Graph
+    constructor(graph: Graph) {
+        this.graph = graph
+        this.load()
     }
-    private render() {
-        this.root.className = 'generic-container'
-        this.root.innerHTML = (`<div class="generic-vision-card">
-            <div class="generic-type">${this.type}</div>
-            <div class="generic-name">${this.name}</div>
-            <div class="generic-desc">${this.desc}</div>
-
-        </div>`)
-        return this
-    }
-}
-
-
-export class TitleCard {
-    private readonly title: string;
-    private readonly name: string;
-    private root: HTMLElement;
-    constructor(title: string, name: string)
-    { this.title = title; this.name = name }
-    mount(el: HTMLElement) {
-        this.root = el
-        this.render()
-        return this
-    }
-    private render() {
-        this.root.className = 'generic-container'
-        this.root.innerHTML = (`<div class="title-card">
-            <div class="title-card-title">${this.title}</div>
-            <div class="title-card-name">${this.name}</div>
-        </div>`)
+    load() {
+        visionPlugins.plugins.forEach((plugin, pi) => {
+            const node = this.graph.createNode({
+                x: 1280 * Math.random(), y: 960 * Math.random(),
+                w: 200, h: undefined,
+            }, [
+                { type: 0, x: 0, y: 10, i: 0, uuid: '' },
+                { type: 1, x: 200, y: 10, i: 0, uuid: '' },
+            ])
+            const panel = new CyberPanel().mount(node.el, { type: 'VLinearLayout', children: [
+                    { type: 'label', label: plugin.name, specific: { background: macron[pi % macron.length] } },
+                    ...(plugin.context || [])
+                ] })
+        })
         return this
     }
 }

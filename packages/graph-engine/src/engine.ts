@@ -13,7 +13,8 @@ export type BasicContext = {
     theme: string;
     selection: boolean;
     background: 'pure' | 'dot';
-    wire: 'default' | 'dynamic'
+    wire: 'default' | 'dynamic';
+    arrow: boolean;
 }
 
 export type OptionalContext ={[K in keyof BasicContext]?: BasicContext[K]}
@@ -124,7 +125,7 @@ export class Graph {
     private frame: HTMLDivElement = null
     private task: Task = { type: -1, cursor: { x: 0, y: 0 } }
     private nodes: Map<string, Wrapper<BasicNode>> = new Map()
-    private ports: Map<string, BasicPort> = new Map() // Whether it's necessary to manage external ports?
+    private ports: Map<string, Wrapper<BasicPort>> = new Map() // Whether it's necessary to manage external ports?
     private wires: Array<Wrapper<BasicWire>> = []
     private arrows: Array<SVGPathElement> = []
     private groups: Map<string, Wrapper<Group>> = new Map()
@@ -141,8 +142,9 @@ export class Graph {
         readonly: false,
         theme: 'bright',
         selection: false,
-        background: 'dot',
+        background: 'pure',
         wire: 'default',
+        arrow: false,
     }
     private begin: BasicPort
     private animation: HTMLStyleElement = null
@@ -222,7 +224,8 @@ export class Graph {
         this.nodes.forEach(wnode => {
             const node = wnode.state
             const ports = []
-            self.ports.forEach(port => {
+            self.ports.forEach(wp => {
+                const port = wp.state
                 if (port.uuid === node.uuid)
                     ports.push(port)
             })
@@ -248,7 +251,7 @@ export class Graph {
                 <number>('outPortNumber' in props ? props['outPortNumber'] : 0),
                 <'horizontal' | 'vertical'>('permutation' in props ? props['permutation'] : 'horizontal'))
         }
-        ports.forEach(port => { port.uuid = node.uuid; this.ports.set(this.portSign(port), port) })
+        ports.forEach(port => { port.uuid = node.uuid; this.ports.set(this.portSign(port), new Wrapper<BasicPort>(port)) })
         const el = inject(this.root, this.generateNodeFragment(this.context, node, ports)) as HTMLDivElement
         node = reactive(node, buildGeometryInterceptors(el, this.context)) // state lift
         const handle = ({ default: () => el, handle: () => el.children[1] })[this.context.style]();
@@ -256,6 +259,7 @@ export class Graph {
         handle.addEventListener('mousedown', (e: MouseEvent) => this.handleMouseDownOnNode(e, node.uuid))
         ports.forEach(port => {
             const el = document.getElementById(this.portSign(port))
+            this.ports.get(this.portSign(port)).el = el
             el.addEventListener('mousedown', e => this.handleMouseDownOnPort(e, node, port))
             el.addEventListener('mouseup'  , e => this.handleMouseUpOnPort  (e, node, port))
         })
@@ -287,7 +291,8 @@ export class Graph {
             const tp = this.convert(this, this.nodes.get(wire.state.to.uuid).state, wire.state.to)
             wire.ref().setAttribute('d', this.path_d(this.context.scale,
                 this.convert(this, this.nodes.get(wire.state.from.uuid).state, wire.state.from), tp))
-            this.placeArrow(this.arrows[i], tp, wire.state.to.type)
+            if (this.context.arrow)
+                this.placeArrow(this.arrows[i], tp, wire.state.to.type)
         }
     }
     connect(from: BasicPort, to: BasicPort) {
@@ -303,7 +308,8 @@ export class Graph {
             this.convert(this, this.nodes.get(wire.state.from.uuid).state, wire.state.from), tp,
             this.wireSign(wire.state)))
         this.wires.push(wire)
-        this.arrows.push(this.createArrow(tp, to.type))
+        if (this.context.arrow)
+            this.arrows.push(this.createArrow(tp, to.type))
     }
     compose(nodes: Array<BasicNode>, bias: number = 10): Wrapper<Group> {
         const xMin = Math.min(...(nodes.map(node => node.x)))
