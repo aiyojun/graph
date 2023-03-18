@@ -2,6 +2,7 @@ import { v4 } from 'uuid'
 import {inject, injectFront, Point, scale2d, wirePath} from "./jlib";
 import './essential.css'
 import SvgAnchor from './assets/anchor.svg'
+import {Menu, MenuItem} from "./menu";
 
 export type BasicContext = {
     scale: number;
@@ -148,6 +149,7 @@ export class Graph {
     }
     private begin: BasicPort
     private animation: HTMLStyleElement = null
+    private menu: Menu = null
     constructor(config: OptionalContext = {})
     { Array.from(Object.keys(config)).forEach(k => { if (k in this.context) this.context[k] = config[k] }) }
     useContext(config: OptionalContext = {}) {
@@ -172,8 +174,12 @@ export class Graph {
         this.root.addEventListener('mousedown', e => this.handleMouseDownOnGraph(e))
         this.root.addEventListener('wheel', e => this.handleWheel(e), { passive: false })
         window.addEventListener('mouseup', e => this.handleMouseUp(e))
+        document.oncontextmenu = () => false
         this.updateAnimation() // first invoking ...
         return this
+    }
+    setMenu(items: Array<MenuItem>) {
+        this.menu = Menu.create(items)
     }
     clear() {
         this.nodes.clear()
@@ -334,6 +340,7 @@ export class Graph {
         this.groups.delete(uuid)
     }
     private handleMouseDownOnPort(e: MouseEvent, node: BasicNode, port: BasicPort) {
+        if (this.menu !== null) this.menu.close()
         if (e.buttons === 1) {
             e.preventDefault()
             e.stopPropagation()
@@ -347,6 +354,7 @@ export class Graph {
         this.connect(this.begin, port)
     }
     private handleMouseDownOnNode(e: MouseEvent, uuid: string) {
+        if (this.menu !== null) this.menu.close()
         if (e.buttons === 1) {
             const node = this.nodes.get(uuid)
             if ((node.state.group || '') === '') {
@@ -361,6 +369,7 @@ export class Graph {
         }
     }
     private handleMouseDownOnGroup(e: MouseEvent, uuid: string) {
+        if (this.menu !== null) this.menu.close()
         if (e.buttons == 1) {
             e.preventDefault()
             e.stopPropagation()
@@ -374,6 +383,7 @@ export class Graph {
         }
     }
     private handleMouseDownOnGraph(e: MouseEvent) {
+        if (this.menu !== null) this.menu.close()
         if (e.buttons === 1) {
             e.preventDefault()
             this.setFrame()
@@ -385,6 +395,10 @@ export class Graph {
             this.snapshotOfGroups.clear()
             this.groups.forEach(group => this.snapshotOfGroups.set(group.state.uuid, { ...group.state }))
             this.task = { type: 3, cursor: { x: e.clientX, y: e.clientY } }
+        } else if (e.buttons === 2) {
+            e.preventDefault()
+            if (this.menu !== null)
+                this.menu.open(e)
         }
     }
     private handleMouseMove(e: MouseEvent) {

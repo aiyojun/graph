@@ -1,0 +1,43 @@
+.graph-menu {
+    position: absolute;
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+    background: #444;
+    z-index: 1000;
+    border-radius: 4px;
+    box-shadow: 0 0 3px 3px rgba(0,0,0,0.05);
+    user-select: none;
+}
+
+.graph-menu-item {
+    width: 100%;
+    height: 24px;
+    position: relative;
+    font-family: Roboto, "Microsoft YaHei", sans-serif;
+    font-size: 12px;
+    border-radius: 4px;
+}
+
+.graph-menu-item:hover {
+    background: rgba(173, 216, 230, 0.5);
+}
+
+.graph-menu-name {
+    width: calc(100% - 10px);
+    position: absolute;
+    height: 24px;
+    line-height: 24px;
+    text-align: left;
+    padding-left: 10px;
+}
+
+.graph-menu-shortcut {
+    width: calc(100% - 10px);
+    color: #aaa;
+    height: 24px;
+    line-height: 24px;
+    text-align: right;
+    padding-right: 10px;
+}

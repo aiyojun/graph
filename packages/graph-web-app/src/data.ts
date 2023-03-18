@@ -1,7 +1,7 @@
 export default {
     plugins: [
         {
-            name: 'Gray', type: 'pre-processing', description: '灰度转化',
+            name: 'Gray😀', type: 'pre-processing', description: '灰度转化',
         },
         {
             name: 'Gauss blur', type: 'Image algorithm', description: '高斯滤波', context: [
