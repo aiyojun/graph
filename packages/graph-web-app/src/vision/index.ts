@@ -2,7 +2,6 @@ import visionPlugins from '../data'
 import {CyberPanel, Graph, locale, MenuItem} from "graph-engine";
 const $T = locale.$T
 
-// const macron = ['#03c9d5', '#f34676', '#ef7642', '#62d000', '#80CA98'];
 const rowHeight = 12
 const cardWidth = 200
 
@@ -12,7 +11,7 @@ export class VisionApp {
         this.graph = graph
         this.load()
     }
-    createPluginInstance(pos, plugin, iGroup) {
+    createPluginInstance(pos, plugin) {
         const { x, y } = this.graph.locate(pos)
         console.info(`${pos.x}, ${pos.y} ${x}, ${y}`)
         const node = this.graph.createNode({
@@ -44,10 +43,10 @@ export class VisionApp {
         })
         const sortedGroupKeys = Array.from(groups.keys()).sort()
         const menuList: Array<MenuItem> = []
-        sortedGroupKeys.forEach((group, iGroup) => {
+        sortedGroupKeys.forEach((group) => {
             menuList.push({
                 name: group, submenu: groups.get(group).map(plugin => ({name: plugin.name, handle: (_pos) => {
-                        this.createPluginInstance(_pos, plugin, iGroup)
+                        this.createPluginInstance(_pos, plugin)
                     }}))
             })
         })
