@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "types": "node scripts/buildTypes.js graph-engine",
-    "build": "node scripts/cmdline.js rm packages/@types && npx lerna link && npx lerna run build && node scripts/buildTypes.js graph-engine",
+    "build": "node scripts/cmdline.js rm packages/@types && npx lerna run build && node scripts/buildTypes.js graph-engine && npx lerna link",
     "link": "npx lerna link",
     "web-app": "npx lerna run --scope=graph-web-app preview",
     "local-app": "npx lerna run --scope=graph-electron-app app",
