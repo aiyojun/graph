@@ -1,6 +1,7 @@
 // The light-weight ui framework, published with graph-engine!
 import './panel.css'
-import {inject} from "./jlib";
+import { inject } from "./jlib";
+import { $T } from './locale'
 
 export class Descriptor {
     type: string;
@@ -70,7 +71,8 @@ export class CyberPanel {
         if (e.type === 'input') {
             real = inject(el, `<div class="panel-c" style="width: ${width};">
                 <input class="panel-e" value="${e.value}" placeholder="${e.specific.placeholder}"/>
-                <div class="panel-label">${e.label}</div>
+                <div class="panel-label">${$T(e.label)}</div>
+                <div class="panel-fill"></div>
             </div>`)
             stopPropagation(real)
             this.refs.set(e.name, real.firstChild)
@@ -78,7 +80,8 @@ export class CyberPanel {
         } else if (e.type === 'number') {
             real = inject(el, `<div class="panel-c" style="width: ${width};">
                 <input class="panel-e" value="${e.value}" placeholder="${e.specific.placeholder}" type="number"/>
-                <div class="panel-label">${e.label}</div>
+                <div class="panel-label">${$T(e.label)}</div>
+                <div class="panel-fill"></div>
             </div>`)
             stopPropagation(real)
             this.refs.set(e.name, real.firstChild)
@@ -86,13 +89,13 @@ export class CyberPanel {
         } else if (e.type === 'textarea') {
             real = inject(el, `<div class="panel-c" style="width: ${width};">
                 <textarea class="panel-e" placeholder="${e.specific.placeholder}">${e.value}</textarea>
-                <div class="panel-label">${e.label}</div>
+                <div class="panel-label">${$T(e.label)}</div>
             </div>`)
             stopPropagation(real)
             this.refs.set(e.name, real.firstChild)
             this.types.set(e.name, e.type)
         } else if (e.type === 'button') {
-            real = inject(el, `<div class="panel-c" style="width: ${width};"><div class="panel-e glass pointer">${e.label}</div></div>`)
+            real = inject(el, `<div class="panel-c" style="width: ${width};"><div class="panel-e glass pointer">${$T(e.label)}</div></div>`)
             if (e.specific.click !== undefined && e.specific.click !== null) {
                 real.addEventListener('click', () => e.specific.click(this.valMap()))
                 stopPropagation(real)
@@ -103,8 +106,10 @@ export class CyberPanel {
             real = inject(el, `<div style="width: ${width}; text-align: center;" class="panel-h-container"></div>`)
             real = el.lastElementChild
         } else if (e.type === 'label') {
-            real = inject(el,`<div class="panel-c" style="width: ${width}; font-weight: bold; background: ${e.specific.background || '#333'};">
-                <div class="panel-label" style=" color: ${e.specific.color || '#fff'};">${e.label}</div></div>`)
+            const back  = ('specific' in e && 'background' in e.specific) ? e.specific.background : '#333'
+            const color = ('specific' in e && 'color' in e.specific) ? e.specific.color : '#fff'
+            real = inject(el,`<div class="panel-c" style="width: ${width}; font-weight: bold; background: ${back};">
+                <div class="panel-label" style=" color: ${color};">${$T(e.label)}</div></div>`)
         } else {
             return null
         }

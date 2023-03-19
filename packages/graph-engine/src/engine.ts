@@ -136,7 +136,7 @@ export class Graph {
     private snapshotOfGroups: Map<string, Group> = new Map()
     private context: BasicContext = {
         scale: 1.0,
-        keepSilence: false,
+        keepSilence: true,
         style: 'default',
         lock: 'none',
         title: false,
@@ -218,6 +218,7 @@ export class Graph {
         }
         es.forEach(e => e.remove())
     }
+    locate(e: Point) { return { x: e.x - this.rootRect.x, y: e.y - this.rootRect.y } }
     parse(data: GraphJson) {
         data.nodes.forEach(node => { this.createNode({ x: node.x, y: node.y, w: node.w, h: node.h, uuid: node.uuid }, node.ports) })
         data.wires.forEach(wire => { this.connect(wire.from, wire.to) })

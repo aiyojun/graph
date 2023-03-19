@@ -15,10 +15,14 @@ input[type=number].panel-e::-webkit-outer-spin-button {
     height: 20px;
     position: relative;
     overflow-y: hidden;
+    /*background-color: #333;*/
+    z-index: 0;
 }
 
 .panel-label {
-    /*pointer-events: none;*/
+    user-select: none;
+    pointer-events: none;
+    cursor: default;
     padding-left: 10px;
     position: absolute;
     top: 0;
@@ -28,6 +32,17 @@ input[type=number].panel-e::-webkit-outer-spin-button {
     font-size: 10px;
     font-family: Roboto, "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
     color: #aaa;
+}
+.panel-fill {
+    pointer-events: none;
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    left: 3px;
+    right: 3px;
+    background-color: rgba(68, 68, 68, 0.62);
+    border-radius: 4px;
+    /*z-index: 1;*/
 }
 /*.panel-e:before {*/
 /*    content: "";*/
@@ -39,6 +54,7 @@ input[type=number].panel-e::-webkit-outer-spin-button {
 /*    background-color: #333;*/
 /*}*/
 .panel-e {
+    /*z-index: 2;*/
     background-color: #333;
     scrollbar-width: none;
     position: absolute;

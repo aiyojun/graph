@@ -1,4 +1,4 @@
-.graph { background: #333; }
+.graph { background: #222; }
 .wire { stroke: #FBD0DC; }
 .port {
     z-index: 5;
@@ -33,3 +33,8 @@
 .panel-label { height: 24px; line-height: 24px; }
 .panel-e { height: 24px; line-height: 24px; }
 .panel-c { height: 24px; }
+
+@font-face {
+    font-family: 'Noto Color Emoji';
+    src: url(https://gitcdn.xyz/repo/googlefonts/noto-emoji/master/fonts/NotoColorEmoji.ttf);
+}

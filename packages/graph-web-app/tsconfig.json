@@ -3,7 +3,7 @@
     "target": "esnext",
     "lib": [
       "dom",
-      "es2021"
+      "es2021",
     ],
     "declaration": true,
     "outDir": "./dist",
@@ -11,7 +11,8 @@
     "forceConsistentCasingInFileNames": true,
     "strict": false,
     "skipLibCheck": true,
-    "moduleResolution": "Node16"
+    "moduleResolution": "Node16",
+    "resolveJsonModule": true,
   },
   "include": [
     "**/*.ts"
