@@ -8,7 +8,7 @@
 > 可与任意前端框架(react/vue)集成。
 > 支持electron本地化部署。
 
-electron版本：
+electron版本(在机器视觉算法上的应用， 我的另一个开源项目)：
 
 ![image](https://github.com/aiyojun/graph/blob/master/performance/electron-app.png)
 

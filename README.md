@@ -10,7 +10,7 @@
 > Can be Integrated with any front-end framework (**react/vue**).
 > Support electron localization deployment.
 
-electron version：
+electron version(machine vision algorithm application, my another opensource project)：
 
 ![image](https://github.com/aiyojun/graph/blob/master/performance/electron-app.png)
 
