@@ -10,7 +10,7 @@
 
 electron版本(在机器视觉算法上的应用， 我的另一个开源项目)：
 
-![image](https://github.com/aiyojun/graph/blob/master/performance/electron-app.png)
+![image](https://github.com/aiyojun/graph/blob/master/electron-app.png)
 
 ## 应用
 

@@ -12,7 +12,7 @@
 
 electron version(machine vision algorithm application, my another opensource project)：
 
-![image](https://github.com/aiyojun/graph/blob/master/performance/electron-app.png)
+![image](https://github.com/aiyojun/graph/blob/master/electron-app.png)
 
 ## Application
 
