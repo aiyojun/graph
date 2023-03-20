@@ -1,11 +1,13 @@
 # Graph
 
+中文README: https://github.com/aiyojun/graph/blob/master/README_ZH.md
+
 > Graph is a GUI tool that describes a model of things using nodes and lines.
 > Node data visualization, modular editing, data import and export and other functions.
 > Written in Typescript and rendered by the native DOM api, with no front-end framework intrusion and maximum performance.
 > The subproject graph-engine is the core rendering engine of Graph and can be imported as node_module.
 > Provide concise api invoking.
-> Can be Integrated with any front-end framework (react/vue).
+> Can be Integrated with any front-end framework (**react/vue**).
 > Support electron localization deployment.
 
 electron version：
