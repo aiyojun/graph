@@ -13,16 +13,16 @@ const graph = new Graph()
 
 new VisionApp(graph)
 
-const panelRoot = inject(
-    document.body,
-    `<div style="box-shadow: 0 0 10px 5px rgba(0,0,0,0.25); position: fixed; top: 0; bottom: 0; right: 0; width: 240px; background: #333;"></div>`
-)
-const panel = inject(panelRoot, `<div id="panel"></div>`) as HTMLElement
-
-new CyberPanel().mount(panel, {
-    type: 'VLinearLayout',
-    children: [
-        {type: 'label', label: 'Control Panel'},
-        {type: 'button', label: 'Use chinese', specific: { click: () => {  } }},
-    ]
-})
+// const panelRoot = inject(
+//     document.body,
+//     `<div style="box-shadow: 0 0 10px 5px rgba(0,0,0,0.25); position: fixed; top: 0; bottom: 0; right: 0; width: 240px; background: #333;"></div>`
+// )
+// const panel = inject(panelRoot, `<div id="panel"></div>`) as HTMLElement
+//
+// new CyberPanel().mount(panel, {
+//     type: 'VLinearLayout',
+//     children: [
+//         {type: 'label', label: 'Control Panel'},
+//         {type: 'button', label: 'Use chinese', specific: { click: () => {  } }},
+//     ]
+// })
