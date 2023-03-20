@@ -1,115 +1,114 @@
 # Graph
 
-> Graph是一个用节点和连线来描述事物模型的图形化工具。
-> 提供节点数据可视化，模块化编辑，数据的导入和导出等功能。
-> 使用Typescript编写，由原生DOM api渲染，无任何前端框架侵入，性能达到极致。
-> 子项目graph-engine是Graph的核心渲染引擎，可作为node_module进行导入。
-> 提供极简api调用。
-> 可与任意前端框架(react/vue)集成。
-> 支持electron本地化部署。
+> Graph is a GUI tool that describes a model of things using nodes and lines.
+> Node data visualization, modular editing, data import and export and other functions.
+> Written in Typescript and rendered by the native DOM api, with no front-end framework intrusion and maximum performance.
+> The subproject graph-engine is the core rendering engine of Graph and can be imported as node_module.
+> Provide concise api invoking.
+> Can be Integrated with any front-end framework (react/vue).
+> Support electron localization deployment.
 
-electron版本：
+electron version：
 
 ![image](https://github.com/aiyojun/graph/blob/master/performance/electron-app.png)
 
-## 应用
+## Application
 
-任何可用节点和连线来描述的问题都可以借助Graph来进行数据可视化，模型操作，生成JSON描述等。
-Graph不会束缚你的想象力和创造力，它可以将你天马行空的想法展现到现实。
+Any problem that can be described using nodes and wires can be described using Graph for data visualization, model manipulation, JSON generation, and more.
+Graph does not constrain your imagination and creativity, it can bring your wild ideas to life.
 
-所能完成的功能包括但不限于一下几点：
+The functions that can be completed include but are not limited to the following:
 
-1. 拓扑数据可视化
-2. 构造流程图
-3. 流式模型仿真
+1. Visualize topology data
+2. Construction flow chart
+3. Flow model simulation
 4. ...
 
-## 功能
+## Features
 
-完整的中英文名暂未想好。目前，该项目提供一下功能(features)：
+Currently, the project provides the following features:
 
-### 与Graph相关的功能点(基础功能)
-| 序号  | 功能描述                         | 完成度 | 时间         |
-|-----|------------------------------|-----|------------|
-| 1   | 创建Graph和Node                 | ✔   | 2023-03-11 |
-| 2   | 操作Node                       | ✔   | 2023-03-11 |
-| 3   | 拖拽Node功能                     | ✔   | 2023-03-11 |
-| 4   | Graph内缩放                     | ✔   | 2023-03-11 |
-| 5   | Node间连线                      | ✔   | 2023-03-11 |
-| 6   | 连线删除                         |     | -          |
-| 7   | 框选Node节点                     | 50% | 2023-03-11 |
-| 8   | 图层管理                         | 50% | 2023-03-11 |
-| 9   | 编辑操作记录与撤回                    |     | -          |
-| 10  | 完整的snapshot功能支持              |     |            |
-| 11  | Increment增量式移动               |     | -          |
-| 12  | 吸附对齐                         |     | -          |
-| 13  | 自动节点排布                       |     | -          |
-| 14  | 海量节点一键折叠                     |     | -          |
-| 15  | 背景栅格                         |     | -          |
-| 16  | 提供基础浅色主题和深色主题                | ✔   | 2023-03-12 |
-| 17  | 动态Theme主题切换                  | ✔   | 2023-03-12 |
+### Function points related to Graph (basic function)
+| No  | Function description               | Degree of completion | Time point |
+|-----|------------------------------------|----------------------|------------|
+| 1   | Graph Node creation                | ✔                    | 2023-03-11 |
+| 2   | Operate Node                       | ✔                    | 2023-03-11 |
+| 3   | Drag Node                          | ✔                    | 2023-03-11 |
+| 4   | Graph zoom                         | ✔                    | 2023-03-11 |
+| 5   | Connect nodes                      | ✔                    | 2023-03-11 |
+| 6   | Wire delete                        |                      | -          |
+| 7   | Frame selection                    | 50%                  | 2023-03-11 |
+| 8   | Graph layer management             | 50%                  | 2023-03-11 |
+| 9   | Edit operation record and withdraw |                      | -          |
+| 10  | Full snapshot functionality        |                      |            |
+| 11  | Node Incremental Dragging          |                      | -          |
+| 12  | Adsorption alignment               |                      | -          |
+| 13  | Automatic node arrangement         |                      | -          |
+| 14  | Mass node folding with one key     |                      | -          |
+| 15  | Grid background                    |                      | -          |
+| 16  | Bright and dark theme              | ✔                    | 2023-03-12 |
+| 17  | Dynamic Theme switching            | ✔                    | 2023-03-12 |
 
-### 与Node相关的功能点
-| 序号  | 功能描述                         | 完成度 | 时间         |
-|-----|------------------------------|-----|------------|
-| 1   | Node折叠                       |     | -          |
-| 2   | Node拖拽时前置                    | ✔   | 2023-03-11 |
-| 3   | 切换Node阴影，圆角和边框               |     | -          |
-| 4   | 多Node节点组合Group               | ✔   | 2023-03-12 |
-| 5   | 解构Group                      | ✔   | 2023-03-12 |
-| 6   | Group折叠                      |     | -          |
-| 7   | 切换Group背景色                   |     | -          |
-| 8   | 节点(Node)按组(Group)移动          | ✔   | 2023-03-12 |
-| 9   | 根据不同的需求生成不同结构的Node layer     | ✔   | 2023-03-13 |
-| 10  | Node layer上的事件管理优化           |     |            |
+### Function points associated with Node
+| No  | Function description                          | Degree of completion | Time point |
+|-----|-----------------------------------------------|----------------------|------------|
+| 1   | Node folding                                  |                      | -          |
+| 2   | Move node to the top                          | ✔                    | 2023-03-11 |
+| 4   | Compose nodes to Group                        | ✔                    | 2023-03-12 |
+| 5   | Group decomposing                             | ✔                    | 2023-03-12 |
+| 6   | Group folding                                 |                      | -          |
+| 7   | Group background                              |                      | -          |
+| 8   | Move nodes by group                           | ✔                    | 2023-03-12 |
+| 9   | Generate different Node layer by requirements | ✔                    | 2023-03-13 |
+| 10  | Events management optimization on node layer  |                      |            |
 
-### 与连线相关的功能点
-| 序号  | 功能描述                       | 完成度 | 时间         |
-|-----|----------------------------|-----|------------|
-| 1   | Port端口配置生成                 | ✔   | 2023-03-11 |
-| 2   | ~~更灵活的Port配置(动态绑定端口)~~     | ✔   | 2023-03-13 |
-| 3   | 提供多种线形(优化贝塞尔线，贝塞尔曲线，方形折线等) | ✔   | 2023-03-11 |
-| 4   | 动态化的连线                     | ✔   | 2023-03-11 |
-| 5   | 端口连线校验                     | ✔   | 2023-03-11 |
-| 6   | 切换连线颜色                     | ✔   | 2023-03-11 |
-| 7   | 连线附加文字                     |     | -          |
-| 8   | 带箭头的连线                     | ✔   | 2023-03-15 |
-| 9   | 箭头样式切换                     |     | -          |
+### Function points associated with Wire
+| No  | Function description                                                      | Degree of completion | Time point |
+|-----|---------------------------------------------------------------------------|----------------------|------------|
+| 1   | Port generation by config                                                 | ✔                    | 2023-03-11 |
+| 2   | ~~dynamic ports binding~~                                                 | ✔                    | 2023-03-13 |
+| 3   | Different kinds of wire(optimized bessel，bessel curve，square broken line) | ✔                    | 2023-03-11 |
+| 4   | Dynamic connection wire                                                   | ✔                    | 2023-03-11 |
+| 5   | Port and connection validation                                            | ✔                    | 2023-03-11 |
+| 6   | Wire color switching                                                      | ✔                    | 2023-03-11 |
+| 7   | Text attach to wire                                                       |                      | -          |
+| 8   | Wire with arrow                                                           | ✔                    | 2023-03-15 |
+| 9   | Arrow style switching                                                     |                      | -          |
 
-### 其他功能
-| 序号  | 功能描述                         | 完成度 | 时间         |
-|-----|------------------------------|-----|------------|
-| 1   | 跨端(浏览器)拷贝                    |     | -          |
-| 2   | 支持多种浏览器，已在Chrome，Firefox进行测试 | ✔   | 2023-03-11 |
-| 3   | 模型运行时状态仿真/模拟                 | ✔   | 2023-03-11 |
-| 4   | 自定义部分快捷操作                    | 10% | 2023-03-11 |
-| 5   | 节点图数据导入与导出                   | ✔   | 2023-03-11 |
-| 6   | 状态栏提示                        | 5%  | 2023-03-11 |
-| 7   | 切换背景图                        |     | -          |
-| 8   | 增加对electron支持(重写electron部分)  | ✔   | 2023-03-11 |
-| 9   | electron跨域http请求             |     |            |
-| 10  | 发布module库                    | ✔   | 2023-03-16 |
-| 11  | 使用父子项目进行管理                   | ✔   | 2023-03-16 |
-| 12  | 提供ui面板进行操控                   | ✔   | 2023-03-17 |
-| 13  | 中英文切换                        | ✔   | 2023-03-19 |
-| 14  | 缩略图(生成简图)                    |     | -          |
-| 15  | 图形导出图片                       |     | -          |
+### Other functions
+| No  | Function description                                           | Degree of completion | Time point |
+|-----|----------------------------------------------------------------|----------------------|------------|
+| 1   | Cross-end (browser) copy                                       |                      | -          |
+| 2   | Supports multiple browsers, has been tested in Chrome, Firefox | ✔                    | 2023-03-11 |
+| 3   | Model runtime state simulation                                 | ✔                    | 2023-03-11 |
+| 4   | Customize partial shortcuts                                    | 10%                  | 2023-03-11 |
+| 5   | Node graph data import and export                              | ✔                    | 2023-03-11 |
+| 6   | Status bar prompt                                              | 5%                   | 2023-03-11 |
+| 7   | Toggle background                                              |                      | -          |
+| 8   | Added support for electron (rewrite electron section)          | ✔                    | 2023-03-11 |
+| 9   | electron Cross-domain http request                             |                      |            |
+| 10  | Publish module library                                         | ✔                    | 2023-03-16 |
+| 11  | Manage with parent-child projects                              | ✔                    | 2023-03-16 |
+| 12  | Provide ui panels for manipulation                             | ✔                    | 2023-03-17 |
+| 13  | Switch between Chinese and English                             | ✔                    | 2023-03-19 |
+| 14  | Thumbnail (generate sketch)                                    |                      | -          |
+| 15  | Graphic export picture                                         |                      | -          |
 
-Node仅作为拖拽式容器存在，您可以将任何元素置入创建好的Node节点中，无论其多复杂。
+Node exists only as a drag-and-drop container, and you can put any element, no matter how complex, into the created Node.
 
-## 优势与特点
+## Advantages and characteristics
 
-- 您可以将拖拽节点，模块连线等任务完全交给graph-engine，而专注于数据逻辑本身。
-- 非常顺滑的操作体验；极简风api调用；无缝融合任何模型；超强的拓展性... 
-- 达到浏览器原生性能，无任何框架侵入。无限制载入节点数，性能完全取决于您的浏览器和所使用的电脑的性能。
-- 打开浏览器控制台性能监控，您会发现：除非必要，基本无脚本调用耗时。
-- 可以与任何框架融合！您可以为一个Vue组件创建节点，也可以为一个React组件创建节点，甚至自己编写的框架，只需简单调用挂载接口即可。
-- 如果你选择了Graph，那么就别考虑使用其他任何flow-chart-graph相关的项目了(其实也不一定，嘿嘿~我肤浅了~)！性能和架构完虐、吊打一切flow引擎...
+- You can leave drag-and-drop nodes, module wiring, etc. to graph-engine and focus on the data logic itself.
+- Very smooth operation experience; Concise api invoking; Seamless integration of any model; Super extensibility...
+- Achieve browser native performance without any framework intrusion. There is no limit to the number of loaded nodes, and the performance depends entirely on the performance of your browser and the computer you are using.
+- Up to the browser console performance monitor, no script invoking time cost unless necessary.
+- Can be integrated with any framework! You can create a node for a Vue component, a node for a React component, or even your own framework with a simple call to the mount interface.
+- If you choose Graph, then don't consider using any flow-chart-graph related projects (not necessarily, I'm shallow)! The performance and architecture beat all flow engines...
 
-如果你还想了解其他flow项目，进行调研对比等，相似的项目有：
+If you want to know more about other flow projects, do some research and comparison, etc., similar projects are:
 
-1. react-flow(react版本)
-2. vue-flow(vue版本)
+1. react-flow(react)
+2. vue-flow(vue)
 3. flowy-vue
 4. flowy
 5. WireFlow
