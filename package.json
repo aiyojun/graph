@@ -27,6 +27,7 @@
   },
   "workspaces": [
     "packages/website-graph-intro",
+    "packages/minui",
     "packages/graph-engine",
     "packages/graph-web-app",
     "packages/graph-electron-app",

@@ -26,7 +26,7 @@ export const inject = (el: Element, frag: string): Element => {
     el.insertAdjacentHTML('beforeend', frag)
     return el.lastChild as Element
 }
-export const try_wrap = (caller: Function, ...args: any[]) => {
+const try_wrap = (caller: Function, ...args: any[]) => {
     if (caller === undefined)
         return
     try {
