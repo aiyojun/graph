@@ -9,3 +9,5 @@ dist/
 @types/
 
 .idea/
+
+tsconfig.tsbuildinfo

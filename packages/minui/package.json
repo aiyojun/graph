@@ -1,0 +1,22 @@
+{
+  "name": "minui",
+  "version": "1.0.0",
+  "description": "A mini ui framework!",
+  "author": "DJun <1608450902@qq.com>",
+  "homepage": "https://github.com/aiyojun/graph/tree/main/packages/minui#readme",
+  "license": "ISC",
+  "main": "src/interactive.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aiyojun/graph.git"
+  },
+  "scripts": {
+    "build": "tsc -p ."
+  },
+  "bugs": {
+    "url": "https://github.com/aiyojun/graph/issues"
+  },
+  "devDependencies": {
+    "typescript": "^4.9.5"
+  }
+}
