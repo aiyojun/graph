@@ -1,0 +1,55 @@
+/* Design principle */
+/* Keep these in mind:
+ *   12px = 0.75rem
+ *   16px =    1rem
+ *   24px =  1.5rem
+ *   32px =    2rem
+ *   40px =  2.5rem
+ *   48px =    3rem
+ *   56px =  3.5rem
+ */
+* { margin: 0; padding: 0; }
+/* Definition of Grid system */
+.row { display: flex; flex-wrap: wrap; }
+.row>* {
+    --gutter-x: 1rem;
+    --gutter-y: 1rem;
+    padding-left : calc(var(--gutter-x)*.5);
+    padding-right: calc(var(--gutter-x)*.5);
+    margin-top: var(--gutter-y);
+    box-sizing: border-box;
+}
+.col-3    { flex: 0 0 auto; width: 25%; }
+.col-6    { flex: 0 0 auto; width: 50%; }
+.col-12   { flex: 0 0 auto; width: 100%; }
+.col-auto { flex: 0 0 auto; width: auto; }
+/* super small screen, like phone */
+@media screen and (max-width: 768px) {
+    .col-xs-3    { flex: 0 0 auto; width: 25%; }
+    .col-xs-6    { flex: 0 0 auto; width: 50%; }
+    .col-xs-12   { flex: 0 0 auto; width: 100%; }
+    .col-xs-auto { flex: 0 0 auto; width: auto; }
+}
+/* normal small screen, like pad */
+@media screen and (min-width: 768px) {
+    .col-sm-3    { flex: 0 0 auto; width: 25%; }
+    .col-sm-6    { flex: 0 0 auto; width: 50%; }
+    .col-sm-12   { flex: 0 0 auto; width: 100%; }
+    .col-sm-auto { flex: 0 0 auto; width: auto; }
+}
+/* middle screen, like pc screen */
+@media screen and (min-width: 992px) {
+    .col-md-3    { flex: 0 0 auto; width: 25%; }
+    .col-md-6    { flex: 0 0 auto; width: 50%; }
+    .col-md-12   { flex: 0 0 auto; width: 100%; }
+    .col-md-auto { flex: 0 0 auto; width: auto; }
+}
+/* large screen, like large pc screen */
+@media screen and (min-width: 1200px) {
+    .col-lg-3    { flex: 0 0 auto; width: 25%; }
+    .col-lg-6    { flex: 0 0 auto; width: 50%; }
+    .col-lg-12   { flex: 0 0 auto; width: 100%; }
+    .col-lg-auto { flex: 0 0 auto; width: auto; }
+}
+.card-body { padding: var(--gutter-y) var(--gutter-x); }
+/*.d-flex { display: flex; }*/
