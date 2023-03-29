@@ -115,4 +115,4 @@ If you want to know more about other flow projects, do some research and compari
 4. flowy
 5. WireFlow
 6. react-flow-chart
-7. ...
+7. uber/react-digraph
