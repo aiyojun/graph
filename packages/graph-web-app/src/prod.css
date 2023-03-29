@@ -1,0 +1,17 @@
+.main-content {
+    padding: .5rem;
+    box-sizing: border-box;
+    height: 100%;
+}
+
+@media screen and (max-width: 768px) {
+    .main-content {
+        width: 100%;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .main-content {
+        width: calc(100% - 15.875rem);
+    }
+}

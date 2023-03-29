@@ -1,4 +1,4 @@
-.graph { background: #222; }
+.graph { background: rgba(0,0,0,0); }
 .wire { stroke: #FBD0DC; }
 .port {
     z-index: 5;
