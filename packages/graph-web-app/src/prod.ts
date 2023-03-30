@@ -29,6 +29,7 @@ export class ProdPage {
     search: HTMLInputElement;
     palette: Element;
     pluginMap: Map<string, HTMLElement> = new Map()
+    vision: VisionApp;
     mount(el: Element) {
         responsiveWebsite()
         this.root = inject(el, `<div class="overlay"></div>`)
@@ -66,7 +67,7 @@ export class ProdPage {
             .mount(this.palette)
             .useTheme('classic')
 
-        new VisionApp(graph)
+        this.vision = new VisionApp(graph)
         return this
     }
     loadPlugins() {
