@@ -1,0 +1,54 @@
+/* Copyright 2015 The Chromium Authors. All rights reserved.
+ * Use of this source code is governed by a BSD-style license that can be
+ * found in the LICENSE file. */
+
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Roboto'), local('Roboto-Regular'),
+    url(./roboto-regular.woff2) format('woff2');
+}
+
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 500;
+    src: local('Roboto Medium'), local('Roboto-Medium'),
+    url(./roboto-medium.woff2) format('woff2');
+}
+
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    src: local('Roboto Bold'), local('Roboto-Bold'),
+    url(./roboto-bold.woff2) format('woff2');
+}
+
+/* license: SIL Open Font License (OFL)
+ * link: https://www.fontspace.com/maven-pro-font-f21944 */
+
+@font-face {
+    font-family: 'Maven Pro';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Maven Pro'), local('Maven-Pro-Regular'),
+    url(./MavenProRegular-97pn.woff2) format('woff2');
+}
+
+@font-face {
+    font-family: 'Maven Pro';
+    font-style: normal;
+    font-weight: 500;
+    src: local('Maven Pro Medium'), local('Maven-Pro-Medium'),
+    url(./MavenProMedium-ynAe.woff2) format('woff2');
+}
+
+@font-face {
+    font-family: 'Maven Pro';
+    font-style: normal;
+    font-weight: 700;
+    src: local('Maven Pro Bold'), local('Maven-Pro-Bold'),
+    url(./MavenProBold-62vA.woff2) format('woff2');
+}
