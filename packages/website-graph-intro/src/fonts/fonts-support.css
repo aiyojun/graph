@@ -52,3 +52,32 @@
     src: local('Maven Pro Bold'), local('Maven-Pro-Bold'),
     url(./MavenProBold-62vA.woff2) format('woff2');
 }
+
+@font-face {
+    font-family: 'sketchica';
+    src: url("./Sketchica-MB4Y.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'WhereStarsShineTheBrightest';
+    src: url("./WhereStarsShineTheBrightest.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'alliance';
+    src: url("./Alliance-No-1-Regular.woff2") format("woff");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'allianceExtra';
+    src: url("./Alliance-No-1-ExtraBold.woff2") format("woff");
+    font-weight: normal;
+    font-style: normal;
+}
+

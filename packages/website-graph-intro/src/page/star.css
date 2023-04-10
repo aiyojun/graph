@@ -1,0 +1,59 @@
+:root {
+    --border-color: #eef4ff;
+    --normal-font: ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+}
+html body { font-family:  Roboto,"Helvetica Neue", "Microsoft YaHei", sans-serif; }
+* { margin: 0; padding: 0; }
+.overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+.limited { margin-left: auto; margin-right: auto; max-width: 1024px; }
+.pretty-rainbow-font {
+    font-weight: 1000 !important;
+    letter-spacing: -0.03em !important;
+    background: linear-gradient(to right, #ff9e2f, #4d0baf);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+.nav-item { box-sizing: border-box; padding-left: 1rem; padding-right: .75rem; margin-bottom: .25rem; height: 28px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
+.nav-item * { transition: all .2s; }
+.nav-item:hover {  }
+.nav-item:hover label { color: #4096ff; }
+.nav-item:hover svg { fill: #4096ff; }
+.nav-item-select { background-color: rgba(230,230,250,0.25); }
+.image-mask { width: 24px; height: 24px; background: url("/cool-background.png"); background-size: 24px 24px;
+    -webkit-mask-image: url("/star4.svg"); mask-image: url("/star4.svg"); mask-repeat: no-repeat; }
+/* clear default style */
+ul li { text-decoration: none; list-style-type: none; }
+textarea[data-v-textarea] { resize: none; outline: none; appearance: none; border: none; background-color: #f8f8f8; border-radius: 0; }
+/* here provide responsive style */
+.responsive-row { display: flex; flex-wrap: wrap; }
+@media screen and (max-width: 768px) {
+    .responsive-col-sm-12 { width: 100%; }
+    .responsive-sm-hide { display: none; }
+    .responsive-padding-edge { padding-left: 1rem; padding-right: 1rem;}
+    .responsive-navigation { display: none; }
+}
+@media screen and (min-width: 768px) {
+    .responsive-col-3 { width: 25%; }
+    .responsive-col-6 { width: 50%; }
+    .responsive-hide { display: none; }
+    .responsive-padding-edge { padding-left: 3rem; padding-right: 3rem;}
+    .responsive-navigation { width: 18rem; box-sizing: border-box; border-right: 1px solid var(--border-color); }
+}
+
+
+.j-bt {
+    display: inline-block;
+    cursor: pointer;
+    height: 32px;
+    line-height: 32px;
+    padding: 0 1rem;
+    box-sizing: border-box;
+    border-radius: 4px;
+    color: #fff;
+    background-color: #1677FF;
+    transition: all .2s;
+}
+.j-bt:hover {
+    background-color: #4096ff;
+}
