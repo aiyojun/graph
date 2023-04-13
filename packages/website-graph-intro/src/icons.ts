@@ -72,6 +72,17 @@ width="${props.width}" height="${props.height}" fill="${props.fill}" stroke-line
 <path d="M128 682.666667m40.533333 0l686.933334 0q40.533333 0 40.533333 40.533333l0 4.266667q0 40.533333-40.533333 40.533333l-686.933334 0q-40.533333 0-40.533333-40.533333l0-4.266667q0-40.533333 40.533333-40.533333Z"></path>
 <path d="M128 256m40.533333 0l686.933334 0q40.533333 0 40.533333 40.533333l0 4.266667q0 40.533333-40.533333 40.533333l-686.933334 0q-40.533333 0-40.533333-40.533333l0-4.266667q0-40.533333 40.533333-40.533333Z"></path>
 </svg>`)
+
+export const enter = (props: {
+    width: number,
+    height: number,
+    fill: string
+}) => (`<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"
+     width="${props.width}" height="${props.height}" fill="${props.fill}" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M511.56 960.39A446.84 446.84 0 0 1 179.49 813a36 36 0 1 1 53.37-48.32 376.7 376.7 0 0 0 278.7 123.67c207.25 0 375.86-168.61 375.86-375.86S718.81 136.67 511.56 136.67c-104.08 0-200.89 41.58-272.59 117.08a36 36 0 1 1-52.21-49.58 448 448 0 1 1 324.8 756.22z"></path>
+    <path d="M693.09 486.54L551.67 345.12A36 36 0 1 0 500.76 396l80.31 80.32H99A35.65 35.65 0 0 0 63.33 512 35.65 35.65 0 0 0 99 547.65h482.07L500.76 628a36 36 0 0 0 50.91 50.92l141.42-141.46a36 36 0 0 0 0-50.92z"></path>
+</svg>`)
+
 export const no_data = (props: {width: number, height: number}) => (`<svg height="${props.height}" width="${props.width}"
      legacy-metrics="false" node-id="1" sillyvg="true" template-height="800" template-width="800" version="1.1"
      viewBox="0 0 800 800"
@@ -169,7 +180,7 @@ export const no_data = (props: {width: number, height: number}) => (`<svg height
 
 export default {
     iconOf(name: string, props: {width: number, height: number, fill: string} = {width: 32, height: 32, fill: '#eee'}) {
-        const icons = { star4, star, shell, transform, unknown, fly, image, chart, category, note, github, download, paper, document, home, more_square, arrow_right, menu }
+        const icons = { star4, star, shell, transform, unknown, fly, image, chart, category, note, github, download, paper, document, home, more_square, arrow_right, menu, enter }
         return name in icons ? icons[name](props) : unknown(props)
     },
     illustrationOf(name: string, props: {width: number, height: number}) {

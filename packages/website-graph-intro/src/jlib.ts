@@ -39,6 +39,12 @@ export class UR {
     host: string = '';
 
     static parse(url: string): UR {
+        if (url === undefined) {
+            console.info('reload page ...')
+            window.location.reload()
+            return null
+            // window.location.href = `${window.location.protocol}//${window.location.host}`
+        }
         const parsed = new UR()
         // console.info(`UR parse: ${url}; ${urlStack.stack[urlStack.seek]} ${urlStack.stack} ${urlStack.seek}`)
         const iPro = url.indexOf('://')
@@ -114,6 +120,11 @@ export const defineRoute = (path: string | RegExp, handle: (url: UR) => void) =>
         urlStack.seek++
         window.addEventListener('load', () => { renderByRouters(uri) })
         window.addEventListener('popstate', () => {
+            // console.info(`popstate seek: ${urlStack.seek}; stack: ${urlStack.stack}`)
+            if (urlStack.seek === 0) {
+                window.location.reload()
+                return
+            }
             urlStack.seek = (history.state !== null && 'routerSeek' in history.state) ? history.state['routerSeek'] : 0
             if (urlStack.seek < 0) return
             renderByRouters(urlStack.stack[urlStack.seek])

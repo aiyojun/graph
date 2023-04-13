@@ -6,24 +6,21 @@
     font-family: 'Roboto';
     font-style: normal;
     font-weight: 400;
-    src: local('Roboto'), local('Roboto-Regular'),
-    url(./roboto-regular.woff2) format('woff2');
+    src: url(./roboto-regular.woff2) format('woff2');
 }
 
 @font-face {
     font-family: 'Roboto';
     font-style: normal;
     font-weight: 500;
-    src: local('Roboto Medium'), local('Roboto-Medium'),
-    url(./roboto-medium.woff2) format('woff2');
+    src: url(./roboto-medium.woff2) format('woff2');
 }
 
 @font-face {
     font-family: 'Roboto';
     font-style: normal;
     font-weight: 700;
-    src: local('Roboto Bold'), local('Roboto-Bold'),
-    url(./roboto-bold.woff2) format('woff2');
+    src: url(./roboto-bold.woff2) format('woff2');
 }
 
 /* license: SIL Open Font License (OFL)
@@ -33,24 +30,21 @@
     font-family: 'Maven Pro';
     font-style: normal;
     font-weight: 400;
-    src: local('Maven Pro'), local('Maven-Pro-Regular'),
-    url(./MavenProRegular-97pn.woff2) format('woff2');
+    src: url(./MavenProRegular-97pn.woff2) format('woff2');
 }
 
 @font-face {
     font-family: 'Maven Pro';
     font-style: normal;
     font-weight: 500;
-    src: local('Maven Pro Medium'), local('Maven-Pro-Medium'),
-    url(./MavenProMedium-ynAe.woff2) format('woff2');
+    src: url(./MavenProMedium-ynAe.woff2) format('woff2');
 }
 
 @font-face {
     font-family: 'Maven Pro';
     font-style: normal;
     font-weight: 700;
-    src: local('Maven Pro Bold'), local('Maven-Pro-Bold'),
-    url(./MavenProBold-62vA.woff2) format('woff2');
+    src: url(./MavenProBold-62vA.woff2) format('woff2');
 }
 
 @font-face {
@@ -79,5 +73,12 @@
     src: url("./Alliance-No-1-ExtraBold.woff2") format("woff");
     font-weight: normal;
     font-style: normal;
+}
+
+@font-face {
+    font-family: 'Nunito';
+    font-style: normal;
+    font-weight: normal;
+    src: url(Nunito.woff2) format('woff2');
 }
 

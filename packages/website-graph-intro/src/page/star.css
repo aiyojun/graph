@@ -9,7 +9,8 @@ html body { font-family:  Roboto,"Helvetica Neue", "Microsoft YaHei", sans-serif
 .pretty-rainbow-font {
     font-weight: 1000 !important;
     letter-spacing: -0.03em !important;
-    background: linear-gradient(to right, #ff9e2f, #4d0baf);
+    /*background: linear-gradient(to right, #ff9e2f, #4d0baf);*/
+    background: linear-gradient(135deg, lightskyblue, lightpink);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -20,10 +21,10 @@ html body { font-family:  Roboto,"Helvetica Neue", "Microsoft YaHei", sans-serif
 .nav-item:hover label { color: #4096ff; }
 .nav-item:hover svg { fill: #4096ff; }
 .nav-item-select { background-color: rgba(230,230,250,0.25); }
-.image-mask { width: 24px; height: 24px; background: url("/cool-background.png"); background-size: 24px 24px;
-    -webkit-mask-image: url("/star4.svg"); mask-image: url("/star4.svg"); mask-repeat: no-repeat; }
+.image-mask { width: 24px; height: 24px; background: linear-gradient(135deg, lightskyblue, lightpink); background-size: 24px 24px;
+    -webkit-mask-image: url("/favicon.svg"); mask-image: url("/favicon.svg"); mask-repeat: no-repeat; }
 /* clear default style */
-ul li { text-decoration: none; list-style-type: none; }
+/*ul li { text-decoration: none; list-style-type: none; }*/
 textarea[data-v-textarea] { resize: none; outline: none; appearance: none; border: none; background-color: #f8f8f8; border-radius: 0; }
 /* here provide responsive style */
 .responsive-row { display: flex; flex-wrap: wrap; }
@@ -56,4 +57,36 @@ textarea[data-v-textarea] { resize: none; outline: none; appearance: none; borde
 }
 .j-bt:hover {
     background-color: #4096ff;
+}
+
+.pretty-link {
+    position: relative;
+    text-decoration: none;
+    list-style-type: none;
+    transition: all .15s;
+    cursor: pointer;
+    margin-left: 1rem;
+    color: #fff;
+    border-bottom: 1px solid rgba(0,0,0,0);
+}
+
+.pretty-link:hover {
+    color: #fff;
+    border-bottom: 3px solid mediumpurple;
+}
+
+
+.pretty-header-button {
+    height: 4rem;
+    line-height: 4rem;
+    color: #fff;
+    font-size: 1rem;
+    border-left: 1px solid rgba(255,255,255,0.05);
+    box-sizing: border-box;
+    padding: 0 1.25rem;
+    cursor: pointer;
+}
+
+.pretty-header-button:hover {
+    background: darkseagreen;
 }
