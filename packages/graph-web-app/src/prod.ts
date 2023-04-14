@@ -1,8 +1,8 @@
 import "./fonts/roboto.css"
 import "./generic.css"
-import {tableOfContent} from "./def";
+import {tableOfContent} from "./vision/def";
 import icons from "./icons";
-import zh from "./locale/zh.json"
+import zh from "./vision/zh.json"
 import locale from "./locale";
 import {Graph} from "graph-engine";
 import {VisionApp} from "./vision";

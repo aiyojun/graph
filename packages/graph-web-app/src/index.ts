@@ -1,7 +1,7 @@
 import {Graph, CyberPanel, inject, locale} from 'graph-engine'
 import './fonts/roboto.css'
 import {VisionApp} from "./vision";
-import zh from './locale/zh.json'
+import zh from './vision/zh.json'
 import './global.css'
 
 // locale.load('zh', zh)

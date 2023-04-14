@@ -1,0 +1,33 @@
+.card-hover:hover { background-color: #333; }
+
+
+.dark-form-input {
+    outline: none;
+    border: none;
+    border-bottom: 1px solid #555;
+    height: 2rem;
+    line-height: 2rem;
+    font-size: 1.25rem;
+    /*min-width: 10rem;*/
+    /*padding: 0 1.25rem;*/
+    /*border-radius: 1rem;*/
+    color: #fff;
+    background-color: rgba(0,0,0,0);
+    font-family: alliance, 'Microsoft YaHei UI Light', 'Microsoft YaHei', sans-serif;
+}
+
+.dark-form-submit {
+    cursor: pointer;
+    transition: background .2s;
+    height: 2rem;
+    line-height: 2rem;
+    font-size: 1.5rem;
+    border-radius: 1rem;
+    padding: 0 1.25rem;
+    color: #fff;
+    background: linear-gradient(0, rgba(135, 206, 235, 0), rgba(179, 210, 232, 0));
+}
+
+.dark-form-submit:hover {
+    background: linear-gradient(0, skyblue, #b3d2e8);
+}

@@ -3,11 +3,11 @@ import "@/fonts/fonts-support.css"
 import axios from "axios";
 import highlight from "highlight.js"
 import "highlight.js/styles/dark.css"
-import {declareResponsiveWebsite, inject, locate, navigateTo, UR} from "@/jlib";
+import {declareResponsiveWebsite, inject, locate, navigateTo, UR} from "@/utils/jlib";
 import "@/page/star.css"
 // import "@/css/foundation.min.css"
 import "@/css/github-markdown-dark.css"
-import icons from "@/icons"
+import icons from "@/utils/icons"
 
 export const PageOfArticle = async (url: string) => {
     (document.body.parentNode as HTMLElement).style.background = '#0d1117'

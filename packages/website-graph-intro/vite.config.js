@@ -12,7 +12,14 @@ export default defineConfig({
 		host: '0.0.0.0',
 		port: 8080,
 		hmr: true,
-		open: true
+		open: true,
+		proxy: {
+			'/star-service': {
+				target: 'http://127.0.0.1:8090',
+				changeOrigin: true,
+				rewrite: p => p.replace(/^\/star-service/, '')
+			}
+		}
 	},
 	resolve: {
 		alias: {

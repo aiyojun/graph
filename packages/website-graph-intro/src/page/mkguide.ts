@@ -1,5 +1,5 @@
-import {inject, navigateTo} from "@/jlib";
-import icons from "@/icons"
+import {inject, navigateTo} from "@/utils/jlib";
+import icons from "@/utils/icons"
 import "@/fonts/fonts-support.css"
 import {Article, readGuideJson} from "@/page/mkdoc";
 

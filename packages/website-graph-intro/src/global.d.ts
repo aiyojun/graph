@@ -5,6 +5,7 @@ declare module '*.svg' {
         viewBox: string;
         node: any;
     }
+
     const svg: Svg;
     export default svg;
 }
@@ -28,6 +29,7 @@ declare module '*.jpg' {
     const jpg: string;
     export default jpg;
 }
+
 declare module '*.jpeg' {
     const jpeg: string;
     export default jpeg;

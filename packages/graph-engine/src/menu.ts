@@ -76,7 +76,7 @@ export class Menu {
                 let delayHandle
                 menuItem.addEventListener('click', () => {})
                 menuItem.addEventListener('mouseenter', () => {
-                    delayHandle = setTimeout(renderSubmenu, 700)
+                    delayHandle = setTimeout(renderSubmenu, 200)
                 })
                 menuItem.addEventListener('mouseleave', () => {
                     if (opened) {

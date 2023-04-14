@@ -1,4 +1,4 @@
-import visionPlugins from '../data'
+import visionPlugins from './data'
 import {CyberPanel, Graph, locale, MenuItem} from "graph-engine";
 const $T = locale.$T
 

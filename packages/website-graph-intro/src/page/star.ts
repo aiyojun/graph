@@ -1,6 +1,6 @@
 import "@/fonts/fonts-support.css"
 import "./star.css"
-import {inject, navigateTo, UR} from "@/jlib"
+import {inject, navigateTo, UR} from "@/utils/jlib"
 import ImageScene from "@/assets/scene.jpeg"
 import ImageScene2 from "@/assets/scenes_x001.jpg"
 import ImageStar4 from "@/assets/star4.svg"
@@ -12,7 +12,7 @@ import ImageFlow from "@/assets/flow.svg"
 import ImageMV2 from "@/assets/machine-vision.svg"
 import Video3dRendering from "@/assets/renderingcar.mp4"
 import VideoSolidwords from "@/assets/drawing_converting.mp4"
-import icons from "@/icons"
+import icons from "@/utils/icons"
 
 export class HomeOfStar {
 

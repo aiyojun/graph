@@ -1,4 +1,3 @@
-import * as url from "url";
 
 export const inject = (el: Element, f: string): Element => {
     el.insertAdjacentHTML('beforeend', f)
@@ -132,3 +131,33 @@ export const defineRoute = (path: string | RegExp, handle: (url: UR) => void) =>
     }
     routers.push({path, handle})
 }
+
+
+// File
+
+export const write = (data, filename) => {
+    const blob = new Blob([JSON.stringify(data, null,2)], {type: "text/json"});
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(link.href);
+    link.remove();
+}
+
+export const read = () => new Promise((resolve) => {
+        const local = document.createElement('input');
+        local.setAttribute('type', 'file');
+        local.onchange = () => {
+            let file = local.files[0];
+            let reader = new FileReader();
+            reader.onload = (data) => {
+                try_wrap(() => resolve(data.target.result.toString()))
+                // callback(data.target.result.toString());
+                local.remove();
+            };
+            reader.readAsText(file);
+        };
+        local.click();
+    }
+)

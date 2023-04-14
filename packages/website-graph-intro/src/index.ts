@@ -1,8 +1,10 @@
-import {HomeOfStar} from "@/page/star";
-import {defineRoute, UR} from "@/jlib";
-import {PageOfArticle} from "@/page/mk";
-import {ProdPage} from "@/vision/prod";
+import {defineRoute, UR} from "@/utils/jlib";
 import {PageMarkdownGuide} from "@/page/mkguide";
+import {PageOfArticle} from "@/page/mk";
+import {HomeOfStar} from "@/page/star";
+import {ProdPage} from "@/vision/prod";
+import {locale} from "graph-engine";
+import {PageModel} from "@/page/model";
 
 const AppMain = () => {
     const home = new HomeOfStar()
@@ -16,9 +18,15 @@ const AppMain = () => {
             }
         }
         css.forEach(x => x.remove())
-        document.body.innerHTML = ''
+        document.body.innerHTML = '<div id="root"></div>'
     }
-    defineRoute('/machine-vision', (ur: UR) => { clear(); new ProdPage().mount(document.body) })
+    defineRoute('/model', (ur: UR) => { clear(); PageModel(document.getElementById('root')) })
+    defineRoute('/machine-vision', (ur: UR) => {
+        clear();
+        if (ur.parameters.has('lang') && ur.parameters.get('lang') === 'zh')
+            locale.lang('zh');
+        new ProdPage().mount(document.body)
+    })
     defineRoute('/article/toc', (ur: UR) => { clear(); PageMarkdownGuide(); })
     defineRoute('/article', (ur: UR) => { clear(); PageOfArticle(ur.toString()) })
     defineRoute(/[.]*/, (ur: UR) => { clear();home.mount(document.body);home.renderByRoute(ur) })

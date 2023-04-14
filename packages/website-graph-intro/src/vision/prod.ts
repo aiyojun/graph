@@ -1,7 +1,7 @@
 import "@/fonts/fonts-support.css"
 import "./generic.css"
 import {tableOfContent} from "@/vision/def";
-import icons from "@/icons";
+import icons from "@/utils/icons";
 import zh from "@/vision/zh.json"
 import {locale} from "graph-engine";
 import {Graph} from "graph-engine";
@@ -52,7 +52,22 @@ export class ProdPage {
             </div>
             <div class="col-xs-12 main-content">
                 <div class="w-100 h-100" style="position: relative; border-radius: 6px; background: rgba(255,255,255,0.03); box-shadow: 0 0 3px 1px rgba(0,0,0,0.05);">
-                    <div id="palette@${this.uuid}"></div>
+                    <div class="spinner">
+                        <div class="spinner-container container-1">
+                            <div class="circle-1"></div>
+                            <div class="circle-2"></div>
+                            <div class="circle-3"></div>
+                            <div class="circle-4"></div>
+                        </div>
+                        <div class="spinner-container container-2">
+                            <div class="circle-1"></div>
+                            <div class="circle-2"></div>
+                            <div class="circle-3"></div>
+                            <div class="circle-4"></div>
+                        </div>
+                    </div>
+                    <div id="palette@${this.uuid}">
+                    </div>
                 </div>
             </div>
         </main>`)
